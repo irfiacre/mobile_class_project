@@ -1,12 +1,17 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Button, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import GenericScreen from "./GenericScreen";
 
 const AboutUsScreen = () => {
+  const content = (
+    <View>
+      <Text>Nothing ....</Text>
+    </View>
+  );
   return (
     <View style={styles.about}>
       <SafeAreaView />
-      <GenericScreen title="Our History" content="Nothing ...." />
+      <GenericScreen title="Our History" content={content} />
     </View>
   );
 };
