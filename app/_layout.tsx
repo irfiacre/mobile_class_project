@@ -1,20 +1,14 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
-
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-
-import { useColorScheme } from "react-native";
+import { View, Text } from "react-native";
 import Sidebar from "@/components/Sidebar";
-
+import { ToastProvider } from "react-native-toast-notifications";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = { initialRouteName: "(tabs)" };
@@ -28,9 +22,6 @@ export default function RootLayout() {
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
 
   useEffect(() => {
     if (loaded) {
@@ -46,18 +37,58 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Drawer drawerContent={(props) => <Sidebar {...props} />}>
-          <Drawer.Screen
-            name="(tabs)"
-            options={{ headerShown: true, title: "" }}
-          />
-        </Drawer>
-      </GestureHandlerRootView>
+    <ThemeProvider value={DefaultTheme}>
+      <ToastProvider
+        placement="bottom"
+        dangerIcon={<MaterialCommunityIcons name="close" color="#fff" />}
+        successIcon={
+          <MaterialCommunityIcons name="check" color="#fff" size={18} />
+        }
+        offset={10}
+        duration={3000}
+        animationDuration={100}
+        renderType={{
+          custom_toast: (toast) => (
+            <View
+              style={{
+                maxWidth: "85%",
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                backgroundColor: "#fff",
+                marginVertical: 4,
+                borderRadius: 8,
+                borderLeftColor: "#00C851",
+                borderLeftWidth: 6,
+                justifyContent: "center",
+                paddingLeft: 16,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: "#333",
+                  fontWeight: "bold",
+                }}
+              >
+                {toast.data.title}
+              </Text>
+              <Text style={{ color: "#a3a3a3", marginTop: 2 }}>
+                {toast.message}
+              </Text>
+            </View>
+          ),
+        }}
+      >
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Drawer drawerContent={(props) => <Sidebar {...props} />}>
+            <Drawer.Screen
+              name="(tabs)"
+              options={{ headerShown: true, title: "" }}
+            />
+          </Drawer>
+        </GestureHandlerRootView>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

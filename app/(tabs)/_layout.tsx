@@ -1,28 +1,34 @@
-import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import React, { useEffect } from "react";
 import { Tabs } from "expo-router";
-
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import { useNetInfo } from "@react-native-community/netinfo";
+import { useToast } from "react-native-toast-notifications";
+import { generateRandomString } from "@/util/helpers";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const toast = useToast();
+  const { type, isConnected } = useNetInfo();
 
+  useEffect(() => {
+    console.log("....ConnectionInfo: ", type, isConnected);
+    if (isConnected !== null) {
+      const message = isConnected
+        ? `${type} is connected successfully`
+        : "Internet got disconnected";
+
+      toast.show(message, {
+        type: isConnected ? "success" : "danger",
+        id: generateRandomString("toast"),
+      });
+    }
+  }, [type, isConnected]);
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
+        tabBarActiveTintColor: Colors.tint,
         headerShown: false,
       }}
     >
@@ -31,7 +37,6 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => (
-            // <TabBarIcon name="code" color={color} />
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
         }}
