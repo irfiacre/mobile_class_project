@@ -9,7 +9,7 @@ const GenericScreen = ({ ...props }) => {
         <Text style={styles.title}>{title || "Generic Title"} </Text>
         <View
           style={styles.separator}
-          // lightColor="#eee"
+          // customColor="#eee"
           // darkColor="rgba(255,255,255,0.1)"
         />
       </View>

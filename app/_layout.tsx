@@ -9,6 +9,8 @@ import { View, Text } from "react-native";
 import Sidebar from "@/components/Sidebar";
 import { ToastProvider } from "react-native-toast-notifications";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import LoginScreen from "./(auth)/loginScreen";
+import { router, useLocalSearchParams, usePathname } from "expo-router";
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = { initialRouteName: "(tabs)" };
@@ -37,6 +39,9 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const isLoggedIn = true;
+  // const nav = useLocalSearchParams();
+  // console.log("=====", nav);
   return (
     <ThemeProvider value={DefaultTheme}>
       <ToastProvider
@@ -81,12 +86,16 @@ function RootLayoutNav() {
         }}
       >
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <Drawer drawerContent={(props) => <Sidebar {...props} />}>
-            <Drawer.Screen
-              name="(tabs)"
-              options={{ headerShown: true, title: "" }}
-            />
-          </Drawer>
+          {!isLoggedIn ? (
+            <LoginScreen />
+          ) : (
+            <Drawer drawerContent={(props) => <Sidebar {...props} />}>
+              <Drawer.Screen
+                name="(tabs)"
+                options={{ headerShown: true, title: "" }}
+              />
+            </Drawer>
+          )}
         </GestureHandlerRootView>
       </ToastProvider>
     </ThemeProvider>

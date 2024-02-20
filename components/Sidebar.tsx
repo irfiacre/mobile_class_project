@@ -84,17 +84,9 @@ const Sidebar = ({ ...props }) => {
         style={{ justifyContent: "center", alignItems: "center", flex: 0.3 }}
       >
         <FontAwesome6 name="circle-user" size={80} style={styles.profilePic} />
-        <ViewCustom
-          style={styles.separator}
-          lightColor="#eee"
-          darkColor="rgba(255,255,255,0.1)"
-        />
+        <ViewCustom style={styles.separator} customColor="#eee" />
         <Text style={styles.userFullName}>John Doe</Text>
-        <ViewCustom
-          style={styles.separator}
-          lightColor="#eee"
-          darkColor="rgba(255,255,255,0.1)"
-        />
+        <ViewCustom style={styles.separator} customColor="#eee" />
       </View>
 
       <View style={{ flex: 0.55, alignItems: "center" }}>
