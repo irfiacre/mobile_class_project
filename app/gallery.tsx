@@ -44,10 +44,7 @@ const Gallery = () => {
     setSelectedImageIndex(index);
     setVisible(true);
   };
-  const handleTakePicture = async () => {
-    const { uri } = await Camera.takePictureAsync();
-    const asset = await MediaLibrary.createAssetAsync(uri);
-  };
+
   return galleryContent[0] ? (
     <View style={styles.container}>
       <View style={styles.head}>

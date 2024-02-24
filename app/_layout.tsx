@@ -4,15 +4,14 @@ import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Drawer } from "expo-router/drawer";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import Sidebar from "@/components/Sidebar";
 import { ToastProvider } from "react-native-toast-notifications";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LoginScreen from "./(auth)/loginScreen";
-import { router, useLocalSearchParams, usePathname } from "expo-router";
-import ContactScreen from "./contacts";
-import Gallery from "./gallery";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = { initialRouteName: "(tabs)" };
@@ -41,9 +40,22 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const isLoggedIn = true;
-  // const nav = useLocalSearchParams();
-  // console.log("=====", nav);
+  const [userInfo, setUserInfo] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    (async () => {
+      const user = await AsyncStorage.getItem("@user");
+      setUserInfo(JSON.parse(user || "null"));
+    })();
+  }, []);
+
+  const handleLogout = () => {
+    AsyncStorage.removeItem("@user");
+    router.back();
+  };
+  console.log("=====", userInfo);
+
   return (
     <ThemeProvider value={DefaultTheme}>
       <ToastProvider
@@ -88,10 +100,18 @@ function RootLayoutNav() {
         }}
       >
         <GestureHandlerRootView style={{ flex: 1 }}>
-          {!isLoggedIn ? (
+          {!userInfo ? (
             <LoginScreen />
           ) : (
-            <Drawer drawerContent={(props) => <Sidebar {...props} />}>
+            <Drawer
+              drawerContent={(props) => (
+                <Sidebar
+                  userInfo={userInfo}
+                  handleLogout={handleLogout}
+                  {...props}
+                />
+              )}
+            >
               <Drawer.Screen
                 name="(tabs)"
                 options={{ headerShown: true, title: "" }}
