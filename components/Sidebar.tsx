@@ -9,12 +9,13 @@ import {
   SafeAreaView,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { View as ViewCustom } from "@/components/Themed";
 import { useRouteInfo } from "expo-router/build/hooks";
 
 const Sidebar = ({ ...props }) => {
   const routerInfo = useRouteInfo();
+  const navigation = useNavigation();
   const listArrayItem = [
     {
       icon: <MaterialCommunityIcons name="home" size={24} color="#1d78d6" />,
@@ -38,6 +39,18 @@ const Sidebar = ({ ...props }) => {
       ),
       title: "About us",
       url: "/aboutUs",
+    },
+    {
+      icon: (
+        <MaterialCommunityIcons name="contacts" size={24} color="#1d78d6" />
+      ),
+      title: "Contacts",
+      url: "/contacts",
+    },
+    {
+      icon: <MaterialCommunityIcons name="image" size={24} color="#1d78d6" />,
+      title: "Gallery",
+      url: "/gallery",
     },
   ];
 

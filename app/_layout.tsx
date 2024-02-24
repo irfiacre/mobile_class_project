@@ -11,6 +11,8 @@ import { ToastProvider } from "react-native-toast-notifications";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LoginScreen from "./(auth)/loginScreen";
 import { router, useLocalSearchParams, usePathname } from "expo-router";
+import ContactScreen from "./contacts";
+import Gallery from "./gallery";
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = { initialRouteName: "(tabs)" };
