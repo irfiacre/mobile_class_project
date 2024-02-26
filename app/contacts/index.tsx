@@ -1,8 +1,19 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Modal,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import * as Contacts from "expo-contacts";
 import ContactDetails from "@/components/ContactDetails";
-import { generateRandomString } from "@/util/helpers";
+import Loading from "@/components/Loading";
+import { MaterialIcons } from "@expo/vector-icons";
+import AddContactForm from "@/components/AddContactForm";
 
 const ContactScreen = () => {
   const [contacts, setContacts] = useState<any>([]);
@@ -33,21 +44,47 @@ const ContactScreen = () => {
     setContacts(listOfContacts);
   }, []);
 
+  const [modelValue, setModel] = useState(false);
+
+  const handleOpenCloseModel = (condition: boolean) => setModel(condition);
+  const handleCreateContact = (formInput: any) => {
+    console.log(formInput);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Contacts List</Text>
-      <FlatList
-        data={contacts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ContactDetails
-            {...item}
-            name={item.name}
-            email={item.email[0]?.email}
-            thumbnail={item.thumbnail}
-          />
-        )}
-      />
+      {contacts ? (
+        <View>
+          {/* <Text style={styles.title}>Contacts List</Text> */}
+          <View style={styles.head}>
+            <Text style={styles.title}>Contacts List</Text>
+            <Pressable
+              style={styles.camera}
+              onPress={() => handleOpenCloseModel(true)}
+            >
+              <MaterialIcons name="person-add" size={24} color="#fff" />
+            </Pressable>
+          </View>
+          {modelValue ? (
+            <AddContactForm handleSubmit={handleCreateContact} />
+          ) : (
+            <FlatList
+              data={contacts}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <ContactDetails
+                  {...item}
+                  name={item.name}
+                  email={item.email[0]?.email}
+                  thumbnail={item.thumbnail}
+                />
+              )}
+            />
+          )}
+        </View>
+      ) : (
+        <Loading />
+      )}
     </View>
   );
 };
@@ -66,5 +103,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     color: "#1d78d6",
     padding: 5,
+  },
+  camera: {
+    padding: 10,
+    backgroundColor: "#1d78d6",
+    borderRadius: 6,
+    width: 45,
+    height: 45,
+  },
+  head: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "space-between",
   },
 });

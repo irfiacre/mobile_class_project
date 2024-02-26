@@ -75,5 +75,7 @@
 	<false/>
 	<key>NSContactsUsageDescription</key>
 	<string>(24866) Allow this Application to access your contacts</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>(24866) Allow this Application to access your contacts</string>
 </dict>
 </plist>

@@ -14,6 +14,8 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
+  - EXNotifications (0.27.6):
+    - ExpoModulesCore
   - Expo (50.0.7):
     - ExpoModulesCore
   - ExpoCrypto (12.8.1):
@@ -1130,6 +1132,7 @@ DEPENDENCIES:
   - EXContacts (from `../node_modules/expo-contacts/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXMediaLibrary (from `../node_modules/expo-media-library/ios`)
+  - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
@@ -1219,6 +1222,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-font/ios"
   EXMediaLibrary:
     :path: "../node_modules/expo-media-library/ios"
+  EXNotifications:
+    :path: "../node_modules/expo-notifications/ios"
   Expo:
     :path: "../node_modules/expo"
   ExpoCrypto:
@@ -1357,6 +1362,7 @@ SPEC CHECKSUMS:
   EXContacts: 5fcab84e1f1a562934e688d422117f9a33169c37
   EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXMediaLibrary: 5a74f7d9cce776ca07cb3090b948cedd7d4841a1
+  EXNotifications: e11f0e9a5b657c064a481a5d522f3bc5a07bf7cd
   Expo: 1cf3922a9b26262b2556544d4defcecccd37d033
   ExpoCrypto: b6428f48599c007676dc81a9b5f72c07e62fdccc
   ExpoFileSystem: a9273932e69a9a1e1a8d01b6ba895bb8294bbea2

@@ -47,12 +47,12 @@ const Gallery = () => {
 
   return galleryContent[0] ? (
     <View style={styles.container}>
-      <View style={styles.head}>
-        <Text style={styles.title}>Contacts List</Text>
+      {/* <View style={styles.head}>
+        <Text style={styles.title}>Gallery</Text>
         <Pressable style={styles.camera}>
           <MaterialIcons name="camera" size={24} color="#fff" />
         </Pressable>
-      </View>
+      </View> */}
 
       <FlatList
         data={galleryContent}

@@ -9,7 +9,7 @@ import { View, Text } from "react-native";
 import Sidebar from "@/components/Sidebar";
 import { ToastProvider } from "react-native-toast-notifications";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import LoginScreen from "./(auth)/loginScreen";
+import LoginScreen from "./loginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 export { ErrorBoundary } from "expo-router";
@@ -52,7 +52,7 @@ function RootLayoutNav() {
 
   const handleLogout = () => {
     AsyncStorage.removeItem("@user");
-    router.back();
+    router.replace("/loginScreen");
   };
   console.log("=====", userInfo);
 
