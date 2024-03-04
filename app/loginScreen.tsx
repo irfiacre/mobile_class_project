@@ -7,9 +7,22 @@ import LottieView from "lottie-react-native";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CustomButton, TextInput } from "@/components/Themed";
+import {
+  addUser,
+  createUsersTable,
+  findUser,
+  openDatabase,
+} from "@/services/usersService";
 
 const LoginScreen = () => {
+  const db = openDatabase();
   const [userInfo, setUserInfo] = useState(null);
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+    validate: false,
+  });
   const router = useRouter();
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId:
@@ -21,18 +34,18 @@ const LoginScreen = () => {
   });
 
   useEffect(() => {
-    console.log("))))))))");
+    console.log("=====", findUser(db));
 
     handleSignInWithGoogle();
   }, [promptAsync]);
 
   const handleSignInWithGoogle = async () => {
     const user = await AsyncStorage.getItem("@user");
-    console.log(user, "userrrrrrrrrrr");
+    // console.log(user, "userrrrrrrrrrr");
     if (!user) {
       if (response?.type === "success") {
         const user = await getUserInfo(response.authentication?.accessToken);
-        console.log(user, "========>>");
+        // console.log(user, "========>>");
       }
     } else {
       setUserInfo(JSON.parse(user));
@@ -62,7 +75,17 @@ const LoginScreen = () => {
     }
   };
 
-  console.log(userInfo, "useringo 00000000");
+  const handleLoginFormEntry = (identifier: string, value: string) =>
+    setLoginForm((prevState) => ({ ...prevState, [identifier]: value }));
+
+  const handleLoginFormSubmit = () => {
+    createUsersTable(db);
+    addUser(db, {
+      name: loginForm.email,
+      id: loginForm.password,
+      role: "moderator",
+    });
+  };
   return (
     <View style={styles.loginContainer}>
       <View>
@@ -78,8 +101,28 @@ const LoginScreen = () => {
           source={require("../assets/json/loginAnimation.json")}
         />
       </View>
-
-      <Text style={styles.text}>Login using</Text>
+      <TextInput
+        isMessageBox={false}
+        onInputChangeText={(identifier: string, text: string) =>
+          handleLoginFormEntry(identifier, text)
+        }
+        textValue={loginForm.email}
+        identifier="Email"
+        style={{ width: "80%", marginHorizontal: "10%", marginVertical: 5 }}
+      />
+      <TextInput
+        isMessageBox={false}
+        onInputChangeText={(identifier: string, text: string) =>
+          handleLoginFormEntry(identifier, text)
+        }
+        textValue={loginForm.password}
+        identifier="Password"
+        style={{ width: "80%", marginHorizontal: "10%", marginVertical: 5 }}
+      />
+      <CustomButton onPressBtn={handleLoginFormSubmit} style={styles.submitBtn}>
+        <Text style={styles.submitText}> Submit</Text>
+      </CustomButton>
+      <Text style={styles.text}>or Login using</Text>
       <TouchableOpacity onPress={() => promptAsync()} style={styles.button}>
         <AntDesign name="google" size={48} color="white" />
       </TouchableOpacity>
@@ -97,7 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    backgroundColor: "#333333",
+    backgroundColor: "#1d78d6",
     display: "flex",
     height: 50,
     width: 50,
@@ -107,8 +150,19 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   text: {
-    // color: "#fff",
     textAlign: "center",
     fontSize: 24,
+  },
+  submitBtn: {
+    backgroundColor: "#1d78d6",
+    borderColor: "#1d78d6",
+    width: "50%",
+    marginBottom: 45,
+    marginVertical: 5,
+  },
+  submitText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "700",
   },
 });

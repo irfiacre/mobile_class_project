@@ -13,6 +13,7 @@ import LoginScreen from "./loginScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 export { ErrorBoundary } from "expo-router";
+import { createUsersTable, openDatabase } from "@/services/usersService";
 
 export const unstable_settings = { initialRouteName: "(tabs)" };
 
@@ -39,22 +40,25 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+const db = openDatabase();
+
 function RootLayoutNav() {
   const [userInfo, setUserInfo] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    (async () => {
-      const user = await AsyncStorage.getItem("@user");
-      setUserInfo(JSON.parse(user || "null"));
-    })();
+    // (async () => {
+    //   const user = await AsyncStorage.getItem("@user");
+    //   setUserInfo(JSON.parse(user || "null"));
+    // })();
+    createUsersTable(db);
+    console.log("--------", createUsersTable(db));
   }, []);
 
   const handleLogout = () => {
     AsyncStorage.removeItem("@user");
     router.replace("/loginScreen");
   };
-  console.log("=====", userInfo);
 
   return (
     <ThemeProvider value={DefaultTheme}>
