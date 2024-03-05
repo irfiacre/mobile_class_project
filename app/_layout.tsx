@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 export { ErrorBoundary } from "expo-router";
 import { createUsersTable, openDatabase } from "@/services/usersService";
+import { NativeBaseProvider } from "native-base";
 
 export const unstable_settings = { initialRouteName: "(tabs)" };
 
@@ -62,51 +63,52 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={DefaultTheme}>
-      <ToastProvider
-        placement="bottom"
-        dangerIcon={<MaterialCommunityIcons name="close" color="#fff" />}
-        successIcon={
-          <MaterialCommunityIcons name="check" color="#fff" size={18} />
-        }
-        offset={10}
-        duration={3000}
-        animationDuration={100}
-        renderType={{
-          custom_toast: (toast) => (
-            <View
-              style={{
-                maxWidth: "85%",
-                paddingHorizontal: 15,
-                paddingVertical: 10,
-                backgroundColor: "#fff",
-                marginVertical: 4,
-                borderRadius: 8,
-                borderLeftColor: "#00C851",
-                borderLeftWidth: 6,
-                justifyContent: "center",
-                paddingLeft: 16,
-              }}
-            >
-              <Text
+      <NativeBaseProvider>
+        <ToastProvider
+          placement="bottom"
+          dangerIcon={<MaterialCommunityIcons name="close" color="#fff" />}
+          successIcon={
+            <MaterialCommunityIcons name="check" color="#fff" size={18} />
+          }
+          offset={10}
+          duration={3000}
+          animationDuration={100}
+          renderType={{
+            custom_toast: (toast) => (
+              <View
                 style={{
-                  fontSize: 14,
-                  color: "#333",
-                  fontWeight: "bold",
+                  maxWidth: "85%",
+                  paddingHorizontal: 15,
+                  paddingVertical: 10,
+                  backgroundColor: "#fff",
+                  marginVertical: 4,
+                  borderRadius: 8,
+                  borderLeftColor: "#00C851",
+                  borderLeftWidth: 6,
+                  justifyContent: "center",
+                  paddingLeft: 16,
                 }}
               >
-                {toast.data.title}
-              </Text>
-              <Text style={{ color: "#a3a3a3", marginTop: 2 }}>
-                {toast.message}
-              </Text>
-            </View>
-          ),
-        }}
-      >
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          {!userInfo ? (
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: "#333",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {toast.data.title}
+                </Text>
+                <Text style={{ color: "#a3a3a3", marginTop: 2 }}>
+                  {toast.message}
+                </Text>
+              </View>
+            ),
+          }}
+        >
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            {/* {!userInfo ? (
             <LoginScreen />
-          ) : (
+          ) : ( */}
             <Drawer
               drawerContent={(props) => (
                 <Sidebar
@@ -121,9 +123,10 @@ function RootLayoutNav() {
                 options={{ headerShown: true, title: "" }}
               />
             </Drawer>
-          )}
-        </GestureHandlerRootView>
-      </ToastProvider>
+            {/* )} */}
+          </GestureHandlerRootView>
+        </ToastProvider>
+      </NativeBaseProvider>
     </ThemeProvider>
   );
 }

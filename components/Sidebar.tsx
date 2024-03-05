@@ -54,6 +54,11 @@ const Sidebar = ({ ...props }) => {
       title: "Gallery",
       url: "/gallery",
     },
+    {
+      icon: <MaterialCommunityIcons name="book" size={24} color="#1d78d6" />,
+      title: "Quiz",
+      url: "/quiz",
+    },
   ];
 
   const Item = ({
