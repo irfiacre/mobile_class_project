@@ -12,19 +12,19 @@ import Loading from "@/components/Loading";
 import ModalComponent from "@/components/Model";
 import { addQuestion, createQuestionTable } from "@/services/questionService";
 import { generateRandomString } from "@/util/helpers";
-import { FormControl } from "native-base";
+import { CheckIcon, FormControl, Select } from "native-base";
 import { FlatList } from "react-native-gesture-handler";
 import QuestionDetails from "@/components/QuestionCard";
 
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
   const db = openDatabase();
-  const [createQuestionState, setCreateDQuestionState] = useState({
+  const [createQuestionState, setCreatedQuestionState] = useState({
+    error: "",
+    questionType: "",
     question: "",
     quizId: id.toString(),
     quizSaved: false,
-    error: "",
-    questionType: "",
   });
   const [quizState, setQuizState] = useState<any>({});
   const [modelValue, setModel] = useState(false);
@@ -38,10 +38,10 @@ const QuizScreen = () => {
   useEffect(() => {
     findQuizById(db, id.toString(), foundQuizDataLocally);
   }, []);
-  console.log("------------", quizState);
+
   const handleCreateQuiz = () => {
     if (createQuestionState.question == "") {
-      setCreateDQuestionState((prevState: any) => ({
+      setCreatedQuestionState((prevState: any) => ({
         ...prevState,
         error: "Title Can not be empty",
       }));
@@ -54,7 +54,7 @@ const QuizScreen = () => {
       question: createQuestionState.question,
     });
 
-    setCreateDQuestionState((prevState: any) => ({
+    setCreatedQuestionState((prevState: any) => ({
       ...prevState,
       quizSaved: true,
     }));
@@ -71,23 +71,20 @@ const QuizScreen = () => {
               title="New Quiz Question"
               isOpen
               handleCloseModel={() => handleOpenCloseModel(false)}
-              handleOnSave={handleCreateQuiz}
+              // handleOnSave={handleCreateQuiz}
             >
               <FormControl>
-                <FormControl.Label fontSize={18}>
-                  Question Content
-                </FormControl.Label>
                 <TextInput
                   isMessageBox
                   onInputChangeText={(identifier: string, text: string) =>
-                    setCreateDQuestionState((prevState: any) => ({
+                    setCreatedQuestionState((prevState: any) => ({
                       ...prevState,
                       error: "",
                       question: text,
                     }))
                   }
                   textValue={createQuestionState.question}
-                  identifier="Question"
+                  identifier="Question Content"
                   style={{
                     borderColor:
                       createQuestionState.error !== "" ? "red" : "grey",
@@ -98,6 +95,30 @@ const QuizScreen = () => {
                     {createQuestionState.error}
                   </Text>
                 )}
+
+                <Select
+                  minWidth="200"
+                  accessibilityLabel="Choose Service"
+                  placeholder="Choose Service"
+                  _selectedItem={{
+                    bg: "teal.600",
+                    endIcon: <CheckIcon size={5} />,
+                  }}
+                  mt="1"
+                  onValueChange={(itemValue) =>
+                    setCreatedQuestionState((prevState: any) => ({
+                      ...prevState,
+                      questionType: itemValue,
+                      error: "",
+                    }))
+                  }
+                >
+                  <Select.Item
+                    label="Multiple Choice"
+                    value="multiple-choice"
+                  />
+                  <Select.Item label="Open Ended" value="open" />
+                </Select>
               </FormControl>
             </ModalComponent>
           ) : (
