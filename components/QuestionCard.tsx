@@ -1,21 +1,16 @@
-import {
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { View as CustomView } from "@/components/Themed";
 import { useRouter } from "expo-router";
-const ContactDetails = (props: any) => {
+
+const QuestionDetails = (props: any) => {
   const { id, title, status } = props;
   const router = useRouter();
 
   return (
     <View>
       <Pressable
-        style={styles.contact}
+        style={styles.Question}
         onPress={() =>
           router.push({
             pathname: "/quiz/[id]",
@@ -23,7 +18,7 @@ const ContactDetails = (props: any) => {
           })
         }
       >
-        <View style={styles.contactDetails}>
+        <View style={styles.QuestionDetails}>
           <Text style={styles.title}>{title}</Text>
           <CustomView style={styles.separator} customColor="#eee" />
           <Text style={styles.status}>{status}</Text>
@@ -33,10 +28,10 @@ const ContactDetails = (props: any) => {
   );
 };
 
-export default ContactDetails;
+export default QuestionDetails;
 
 const styles = StyleSheet.create({
-  contact: {
+  Question: {
     flex: 1,
     padding: 5,
     justifyContent: "flex-start",
@@ -48,7 +43,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   thumbnail: { padding: 10, borderRadius: 50 },
-  contactDetails: { padding: 10 },
+  QuestionDetails: { padding: 10 },
   title: {
     fontSize: 24,
     fontWeight: "700",

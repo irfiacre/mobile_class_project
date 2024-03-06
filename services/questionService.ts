@@ -45,7 +45,7 @@ export const createQuestionTable = async (db: SQLiteDatabase) => {
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists questions (id text primary key not null, quiz_id text, question text);"
+        "create table if not exists questions (id text primary key not null, quiz_id text, question text, type text);"
       );
     });
     return true;
@@ -63,7 +63,7 @@ export const addQuestion = async (
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "insert into questions (id, title, status) values (?, ?, ?)",
+        "insert into questions (id, title, status, type) values (?, ?, ?,?)",
         [id, quizId, question]
       );
     });

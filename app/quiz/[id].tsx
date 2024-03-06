@@ -13,6 +13,8 @@ import ModalComponent from "@/components/Model";
 import { addQuestion, createQuestionTable } from "@/services/questionService";
 import { generateRandomString } from "@/util/helpers";
 import { FormControl } from "native-base";
+import { FlatList } from "react-native-gesture-handler";
+import QuestionDetails from "@/components/QuestionCard";
 
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
@@ -22,9 +24,11 @@ const QuizScreen = () => {
     quizId: id.toString(),
     quizSaved: false,
     error: "",
+    questionType: "",
   });
   const [quizState, setQuizState] = useState<any>({});
   const [modelValue, setModel] = useState(false);
+  const [quizQuestionsState, setQuestionsState] = useState<any>([]);
 
   const handleOpenCloseModel = (condition: boolean) => setModel(condition);
   const router = useRouter();
@@ -56,6 +60,8 @@ const QuizScreen = () => {
     }));
     handleOpenCloseModel(false);
   };
+  console.log("=====", createQuestionState);
+
   return (
     <View style={styles.container}>
       {quizState.title ? (
@@ -68,14 +74,16 @@ const QuizScreen = () => {
               handleOnSave={handleCreateQuiz}
             >
               <FormControl>
-                <FormControl.Label fontSize={18}>Quiz Title</FormControl.Label>
+                <FormControl.Label fontSize={18}>
+                  Question Content
+                </FormControl.Label>
                 <TextInput
                   isMessageBox
                   onInputChangeText={(identifier: string, text: string) =>
                     setCreateDQuestionState((prevState: any) => ({
                       ...prevState,
                       error: "",
-                      title: text,
+                      question: text,
                     }))
                   }
                   textValue={createQuestionState.question}
@@ -128,13 +136,24 @@ const QuizScreen = () => {
                     width: 50,
                     height: 55,
                   }}
-                  onPressBtn={() => console.log("---------")}
+                  onPressBtn={() => handleOpenCloseModel(true)}
                 >
                   <MaterialIcons name="add-circle" size={24} color="#fff" />
                 </CustomButton>
               </View>
 
               <CustomView style={styles.separator} customColor="#1d78d6" />
+              <FlatList
+                data={quizQuestionsState}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <QuestionDetails
+                    {...item}
+                    title={item.title}
+                    status={item?.status}
+                  />
+                )}
+              />
             </View>
           )}
         </View>
