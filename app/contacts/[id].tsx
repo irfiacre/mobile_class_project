@@ -1,13 +1,4 @@
-import {
-  FlatList,
-  ImageBackground,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as Contacts from "expo-contacts";
 import { View as CustomView } from "@/components/Themed";

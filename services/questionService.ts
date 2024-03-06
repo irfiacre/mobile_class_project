@@ -2,9 +2,10 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { Platform } from "react-native";
 import * as SQLite from "expo-sqlite";
 
-interface QuizObjInterface {
+interface QuestionObjInterface {
   id: string;
-  title: string;
+  quizId: string;
+  question: string;
 }
 
 export const openDatabase = (): any => {
@@ -21,7 +22,7 @@ export const openDatabase = (): any => {
 };
 
 const readOnly = true;
-export const findQuizData = async (
+export const findQuestionData = async (
   db: SQLiteDatabase,
   handleFoundData: (data: any) => void
 ) => {
@@ -40,11 +41,11 @@ export const findQuizData = async (
   return result;
 };
 
-export const createQuizTable = async (db: SQLiteDatabase) => {
+export const createQuestionTable = async (db: SQLiteDatabase) => {
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists quizzes (id text primary key not null, title text, status text);"
+        "create table if not exists questions (id text primary key not null, quiz_id text, question text);"
       );
     });
     return true;
@@ -54,16 +55,16 @@ export const createQuizTable = async (db: SQLiteDatabase) => {
   }
 };
 
-export const addQuiz = async (
+export const addQuestion = async (
   db: SQLiteDatabase,
-  quizObj: QuizObjInterface
+  quizObj: QuestionObjInterface
 ) => {
-  const { id, title } = quizObj;
+  const { id, quizId, question } = quizObj;
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "insert into quizzes (id, title, status) values (?, ?, ?)",
-        [id, title, "draft"]
+        "insert into questions (id, title, status) values (?, ?, ?)",
+        [id, quizId, question]
       );
     });
     return true;
@@ -73,10 +74,10 @@ export const addQuiz = async (
   }
 };
 
-export const dropTableQuiz = (db: SQLiteDatabase) => {
+export const dropTableQuestion = (db: SQLiteDatabase) => {
   try {
     db.transaction((tx) => {
-      tx.executeSql("DROP TABLE quizzes");
+      tx.executeSql("DROP TABLE questions");
     });
     return true;
   } catch (error) {
@@ -85,7 +86,7 @@ export const dropTableQuiz = (db: SQLiteDatabase) => {
   }
 };
 
-export const findQuizById = async (
+export const findQuizQuestionsById = async (
   db: SQLiteDatabase,
   quizId: string,
   handleFoundData: (data: any) => void
@@ -93,7 +94,7 @@ export const findQuizById = async (
   try {
     await db.transactionAsync(async (tx) => {
       const result = await tx.executeSqlAsync(
-        "select * from quizzes where id=?",
+        "select * from questions where quiz_id=?",
         [quizId]
       );
       if (result.rows) {

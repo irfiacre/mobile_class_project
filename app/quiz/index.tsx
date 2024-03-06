@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import QuizDetails from "@/components/QuizCard";
 import Loading from "@/components/Loading";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Box, FormControl, Input } from "native-base";
+import { FormControl } from "native-base";
 import ModalComponent from "@/components/Model";
-import { generateRandomString, primaryColor } from "@/util/helpers";
+import { generateRandomString } from "@/util/helpers";
 import { TextInput } from "@/components/Themed";
 import {
   addQuiz,
@@ -21,16 +21,14 @@ const QuizScreen = () => {
   const [createQuizState, setCreateDQuizState] = useState({
     title: "",
     error: "",
-    quizSaved: true,
+    quizSaved: false,
   });
 
   const foundQuizDataLocally = (data: any) => {
-    console.log("=======", data);
     setQuizData(data);
   };
 
   useEffect(() => {
-    const listOfQuiz: any = [];
     findQuizData(db, foundQuizDataLocally);
   }, [createQuizState.quizSaved]);
 
@@ -44,7 +42,7 @@ const QuizScreen = () => {
         error: "Title Can not be empty",
       }));
     }
-
+    // dropTableQuiz(db);
     createQuizTable(db);
     addQuiz(db, {
       id: generateRandomString(createQuizState.title),
