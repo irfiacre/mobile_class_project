@@ -23,6 +23,8 @@ import QuestionDetails from "@/components/QuestionCard";
 
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
+  console.log("answer ID", id);
+
   const db = openDatabase();
   const [createQuestionState, setCreatedQuestionState] = useState({
     error: "",
@@ -46,7 +48,6 @@ const QuizScreen = () => {
   useEffect(() => {
     findQuizById(db, id.toString(), foundQuizDataLocally);
     findQuizQuestionsById(db, id.toString(), foundQuizQuestionsDataLocally);
-    location.reload();
   }, [createQuestionState.quizSaved]);
 
   const handleCreateQuizQuestion = () => {
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   section1: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
     marginLeft: -15,
