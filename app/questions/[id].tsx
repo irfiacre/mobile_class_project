@@ -23,13 +23,6 @@ import QuestionDetails from "@/components/QuestionCard";
 
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
-  const [quizState, setQuizState] = useState<any>({});
-  const foundQuizDataLocally = (data: any) => {
-    setQuizState(data[0]);
-  };
-  useEffect(() => {
-    findQuizById(db, id.toString(), foundQuizDataLocally);
-  }, []);
   const db = openDatabase();
   const [createQuestionState, setCreatedQuestionState] = useState({
     error: "",
@@ -38,35 +31,22 @@ const QuizScreen = () => {
     quizId: id.toString(),
     quizSaved: false,
   });
+  const [quizState, setQuizState] = useState<any>({});
   const [modelValue, setModel] = useState(false);
   const [quizQuestionsState, setQuestionsState] = useState<any>([]);
 
-  const handleOpenCloseModel = (condition: boolean) => {
-    if (condition) {
-      setCreatedQuestionState({
-        error: "",
-        questionType: "",
-        question: "",
-        quizId: id.toString(),
-        quizSaved: false,
-      });
-    }
-    setModel(condition);
-  };
+  const handleOpenCloseModel = (condition: boolean) => setModel(condition);
   const router = useRouter();
+  const foundQuizDataLocally = (data: any) => {
+    setQuizState(data[0]);
+  };
   const foundQuizQuestionsDataLocally = (data: any) => {
-    console.log(")))))))))", data);
     setQuestionsState(data);
   };
   useEffect(() => {
-    (async () => {
-      await findQuizQuestionsById(
-        db,
-        id.toString(),
-        foundQuizQuestionsDataLocally
-      );
-      console.log("---- await");
-    })();
+    findQuizById(db, id.toString(), foundQuizDataLocally);
+    findQuizQuestionsById(db, id.toString(), foundQuizQuestionsDataLocally);
+    location.reload();
   }, [createQuestionState.quizSaved]);
 
   const handleCreateQuizQuestion = () => {
@@ -91,6 +71,7 @@ const QuizScreen = () => {
     }));
     handleOpenCloseModel(false);
   };
+  console.log("=====", quizQuestionsState);
 
   return (
     <View style={styles.container}>

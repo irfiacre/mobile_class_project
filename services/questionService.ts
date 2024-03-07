@@ -6,6 +6,7 @@ interface QuestionObjInterface {
   id: string;
   quizId: string;
   question: string;
+  questionType: string;
 }
 
 export const openDatabase = (): any => {
@@ -59,12 +60,12 @@ export const addQuestion = async (
   db: SQLiteDatabase,
   quizObj: QuestionObjInterface
 ) => {
-  const { id, quizId, question } = quizObj;
+  const { id, quizId, question, questionType } = quizObj;
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "insert into questions (id, title, status, type) values (?, ?, ?,?)",
-        [id, quizId, question]
+        "insert into questions (id, quiz_id, question, type) values (?, ?, ?,?)",
+        [id, quizId, question, questionType]
       );
     });
     return true;
@@ -97,8 +98,12 @@ export const findQuizQuestionsById = async (
         "select * from questions where quiz_id=?",
         [quizId]
       );
+      console.log(result);
+
       if (result.rows) {
         handleFoundData(result.rows);
+      } else {
+        console.log("No result.rows");
       }
     }, readOnly);
   } catch (error) {

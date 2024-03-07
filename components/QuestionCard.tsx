@@ -4,24 +4,26 @@ import { View as CustomView } from "@/components/Themed";
 import { useRouter } from "expo-router";
 
 const QuestionDetails = (props: any) => {
-  const { id, title, status } = props;
+  const { id, question, type, questionNbr } = props;
   const router = useRouter();
 
   return (
     <View>
       <Pressable
         style={styles.Question}
-        onPress={() =>
-          router.push({
-            pathname: "/quiz/[id]",
-            params: { id: id },
-          })
+        onPress={
+          () => console.log("=======")
+
+          // router.push({
+          //   pathname: "/questions/[id]",
+          //   params: { id: id },
+          // })
         }
       >
+        <Text style={styles.number}>{questionNbr})</Text>
         <View style={styles.QuestionDetails}>
-          <Text style={styles.title}>{title}</Text>
-          <CustomView style={styles.separator} customColor="#eee" />
-          <Text style={styles.status}>{status}</Text>
+          <Text style={styles.content}>{question}</Text>
+          <Text style={styles.type}>{type}</Text>
         </View>
       </Pressable>
     </View>
@@ -36,19 +38,18 @@ const styles = StyleSheet.create({
     padding: 5,
     justifyContent: "flex-start",
     flexDirection: "row",
-    alignItems: "center",
-    borderColor: "#000",
+    alignItems: "baseline",
+    borderColor: "#E2E8F0",
     backgroundColor: "#E2E8F0",
     borderRadius: 9,
     marginVertical: 5,
   },
-  thumbnail: { padding: 10, borderRadius: 50 },
-  QuestionDetails: { padding: 10 },
-  title: {
+  QuestionDetails: { paddingVertical: 10 },
+  content: {
     fontSize: 24,
     fontWeight: "700",
   },
-  status: {
+  type: {
     fontSize: 18,
     fontWeight: "400",
     color: "grey",
@@ -56,8 +57,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     textTransform: "capitalize",
   },
-  separator: {
-    height: 1,
-    width: "100%",
+  number: {
+    fontWeight: "700",
+    fontSize: 24,
+    paddingHorizontal: 10,
   },
 });

@@ -64,13 +64,13 @@ export function TextInput(props: TextInputProps) {
           },
           style,
         ]}
-        multiline={isMessageBox ? isMessageBox : false}
+        multiline={isMessageBox}
         numberOfLines={isMessageBox ? 10 : 0}
         onChangeText={(text) =>
           onInputChangeText(identifier.toLocaleLowerCase(), text)
         }
         placeholderTextColor="grey"
-        value={textValue}
+        defaultValue={textValue}
         placeholder={`Enter ${identifier}.....`}
         secureTextEntry={identifier.toLocaleLowerCase().includes("password")}
       />
