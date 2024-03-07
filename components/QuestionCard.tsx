@@ -11,16 +11,17 @@ const QuestionDetails = (props: any) => {
     <View>
       <Pressable
         style={styles.Question}
-        onPress={
-          () => console.log("=======")
-
-          // router.push({
-          //   pathname: "/questions/[id]",
-          //   params: { id: id },
-          // })
+        onPress={() =>
+          router.push({
+            pathname: "/questions/[id]",
+            params: { id: id },
+          })
         }
       >
-        <Text style={styles.number}>{questionNbr})</Text>
+        <Text style={styles.number}>
+          {questionNbr}
+          {")"}
+        </Text>
         <View style={styles.QuestionDetails}>
           <Text style={styles.content}>{question}</Text>
           <Text style={styles.type}>{type}</Text>
