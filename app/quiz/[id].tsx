@@ -19,7 +19,7 @@ import {
 import { generateRandomString } from "@/util/helpers";
 import { CheckIcon, FormControl, Select } from "native-base";
 import { FlatList } from "react-native-gesture-handler";
-import QuestionDetails from "@/components/QuestionCard";
+import QuestionDetails from "@/components/card/QuestionCard";
 
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();

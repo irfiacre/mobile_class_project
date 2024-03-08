@@ -2,11 +2,11 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { Platform } from "react-native";
 import * as SQLite from "expo-sqlite";
 
-interface QuestionObjInterface {
+interface AnswersObjInterface {
   id: string;
-  quizId: string;
-  question: string;
-  questionType: string;
+  questionId: string;
+  content: string;
+  isCorrect: string;
 }
 
 export const openDatabase = (): any => {
@@ -23,14 +23,14 @@ export const openDatabase = (): any => {
 };
 
 const readOnly = true;
-export const findQuestionData = async (
+export const findAnswersData = async (
   db: SQLiteDatabase,
   handleFoundData: (data: any) => void
 ) => {
   let result;
   try {
     await db.transactionAsync(async (tx) => {
-      const result = await tx.executeSqlAsync("SELECT * FROM QUIZZES", []);
+      const result = await tx.executeSqlAsync("select * from answers", []);
       if (result.rows) {
         handleFoundData(result.rows);
       }
@@ -42,11 +42,11 @@ export const findQuestionData = async (
   return result;
 };
 
-export const createQuestionTable = async (db: SQLiteDatabase) => {
+export const createAnswersTable = async (db: SQLiteDatabase) => {
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists questions (id text primary key not null, quiz_id text, question text, type text);"
+        "create table if not exists answers (id text primary key not null, question_id text, content text, is_correct text);"
       );
     });
     return true;
@@ -56,16 +56,16 @@ export const createQuestionTable = async (db: SQLiteDatabase) => {
   }
 };
 
-export const addQuestion = async (
+export const addAnswer = async (
   db: SQLiteDatabase,
-  quizObj: QuestionObjInterface
+  quizObj: AnswersObjInterface
 ) => {
-  const { id, quizId, question, questionType } = quizObj;
+  const { id, questionId, content, isCorrect } = quizObj;
   try {
     db.transaction((tx) => {
       tx.executeSql(
-        "insert into questions (id, quiz_id, question, type) values (?, ?, ?,?)",
-        [id, quizId, question, questionType]
+        "insert into answers (id, question_id, content, is_correct) values (?, ?, ?,?)",
+        [id, questionId, content, isCorrect]
       );
     });
     return true;
@@ -75,10 +75,10 @@ export const addQuestion = async (
   }
 };
 
-export const dropTableQuestion = (db: SQLiteDatabase) => {
+export const dropTableAnswers = (db: SQLiteDatabase) => {
   try {
     db.transaction((tx) => {
-      tx.executeSql("DROP TABLE questions");
+      tx.executeSql("DROP TABLE answers");
     });
     return true;
   } catch (error) {
@@ -87,7 +87,7 @@ export const dropTableQuestion = (db: SQLiteDatabase) => {
   }
 };
 
-export const findQuizQuestionsById = async (
+export const findQuestionAnswersById = async (
   db: SQLiteDatabase,
   quizId: string,
   handleFoundData: (data: any) => void
@@ -95,7 +95,7 @@ export const findQuizQuestionsById = async (
   try {
     await db.transactionAsync(async (tx) => {
       const result = await tx.executeSqlAsync(
-        "select * from questions where quiz_id=?",
+        "select * from answers where question_id=?",
         [quizId]
       );
       console.log(result);
@@ -111,7 +111,7 @@ export const findQuizQuestionsById = async (
   }
 };
 
-export const findQuestionById = async (
+export const findAnswerById = async (
   db: SQLiteDatabase,
   questionId: string,
   handleFoundData: (data: any) => void
@@ -119,11 +119,9 @@ export const findQuestionById = async (
   try {
     await db.transactionAsync(async (tx) => {
       const result = await tx.executeSqlAsync(
-        "select * from questions where id=?",
+        "select * from answers where id=?",
         [questionId]
       );
-      console.log(result);
-
       if (result.rows) {
         handleFoundData(result.rows);
       } else {

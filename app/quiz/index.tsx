@@ -1,6 +1,6 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import QuizDetails from "@/components/QuizCard";
+import QuizDetails from "@/components/card/QuizCard";
 import Loading from "@/components/Loading";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FormControl } from "native-base";

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import { findQuizById, openDatabase } from "@/services/quizService";
+import { openDatabase } from "@/services/quizService";
 import {
   CustomButton,
   View as CustomView,
@@ -11,186 +11,181 @@ import {
 import Loading from "@/components/Loading";
 import ModalComponent from "@/components/Model";
 import {
-  addQuestion,
-  createQuestionTable,
-  dropTableQuestion,
-  findQuizQuestionsById,
-} from "@/services/questionService";
+  addAnswer,
+  createAnswersTable,
+  findQuestionAnswersById,
+} from "@/services/answersService";
 import { generateRandomString } from "@/util/helpers";
-import { CheckIcon, FormControl, Select } from "native-base";
+import { FormControl, Radio } from "native-base";
 import { FlatList } from "react-native-gesture-handler";
-import QuestionDetails from "@/components/QuestionCard";
+import AnswerDetails from "@/components/card/AnswerCard";
+import { findQuestionById } from "@/services/questionService";
 
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
   console.log("answer ID", id);
 
   const db = openDatabase();
-  const [createQuestionState, setCreatedQuestionState] = useState({
-    error: "",
-    questionType: "",
-    question: "",
-    quizId: id.toString(),
-    quizSaved: false,
-  });
   const [quizState, setQuizState] = useState<any>({});
   const [modelValue, setModel] = useState(false);
-  const [quizQuestionsState, setQuestionsState] = useState<any>([]);
 
   const handleOpenCloseModel = (condition: boolean) => setModel(condition);
   const router = useRouter();
-  const foundQuizDataLocally = (data: any) => {
+  const foundQuestionDataLocally = (data: any) => {
     setQuizState(data[0]);
   };
-  const foundQuizQuestionsDataLocally = (data: any) => {
-    setQuestionsState(data);
+
+  useEffect(() => {
+    findQuestionById(db, id.toString(), foundQuestionDataLocally);
+  }, []);
+
+  const [createAnswerState, setCreatedAnswerState] = useState({
+    error: "",
+    isCorrect: "false",
+    content: "",
+    questionId: id.toString(),
+    answerSaved: false,
+  });
+  const [answersState, setAnswersState] = useState([]);
+  const foundAnswersDataLocally = (data: any) => {
+    setAnswersState(data);
   };
   useEffect(() => {
-    findQuizById(db, id.toString(), foundQuizDataLocally);
-    findQuizQuestionsById(db, id.toString(), foundQuizQuestionsDataLocally);
-  }, [createQuestionState.quizSaved]);
-
-  const handleCreateQuizQuestion = () => {
-    if (createQuestionState.question == "") {
-      setCreatedQuestionState((prevState: any) => ({
+    findQuestionAnswersById(db, id.toString(), foundAnswersDataLocally);
+  }, []);
+  const handleCreateQuizAnswer = () => {
+    if (createAnswerState.content == "") {
+      setCreatedAnswerState((prevState: any) => ({
         ...prevState,
         error: "Title Can not be empty",
       }));
     }
-    // dropTableQuestion(db);
-    createQuestionTable(db);
-    addQuestion(db, {
-      id: generateRandomString(createQuestionState.question.substring(5)),
-      quizId: createQuestionState.quizId,
-      question: createQuestionState.question,
-      questionType: createQuestionState.questionType,
+    // dropTableAnswer(db);
+    createAnswersTable(db);
+    addAnswer(db, {
+      id: generateRandomString(createAnswerState.content.substring(10)),
+      questionId: createAnswerState.questionId,
+      content: createAnswerState.content,
+      isCorrect: createAnswerState.isCorrect,
     });
-
-    setCreatedQuestionState((prevState: any) => ({
+    setCreatedAnswerState((prevState: any) => ({
       ...prevState,
       quizSaved: true,
     }));
     handleOpenCloseModel(false);
   };
-  console.log("=====", quizQuestionsState);
+  console.log("=====>>", answersState);
 
   return (
     <View style={styles.container}>
-      {quizState.title ? (
+      {quizState.question ? (
         <View>
           {modelValue ? (
             <ModalComponent
-              title="New Quiz Question"
+              title="New Quiz Answer"
               isOpen
               handleCloseModel={() => handleOpenCloseModel(false)}
-              handleOnSave={handleCreateQuizQuestion}
+              handleOnSave={handleCreateQuizAnswer}
             >
               <FormControl>
                 <FormControl.Label fontSize={18}>Content</FormControl.Label>
                 <TextInput
                   isMessageBox={true}
                   onInputChangeText={(_, text: string) => {
-                    setCreatedQuestionState((prevState: any) => ({
+                    setCreatedAnswerState((prevState: any) => ({
                       ...prevState,
                       error: "",
-                      question: text,
+                      content: text,
                     }));
                   }}
-                  textValue={createQuestionState.question}
-                  identifier="Question Content"
+                  textValue={createAnswerState.content}
+                  identifier="Answer Content"
                   style={{
                     borderColor:
-                      createQuestionState.error !== "" ? "red" : "grey",
+                      createAnswerState.error !== "" ? "red" : "grey",
                   }}
                 />
-                {createQuestionState.error !== "" && (
+                {createAnswerState.error !== "" && (
                   <Text style={{ color: "red" }}>
-                    {createQuestionState.error}
+                    {createAnswerState.error}
                   </Text>
                 )}
-                <FormControl.Label fontSize={18}>Type</FormControl.Label>
-                <Select
-                  minWidth="200"
-                  accessibilityLabel="Question Type"
-                  placeholder="Question Type"
-                  _selectedItem={{
-                    bg: "teal.600",
-                    borderBottomColor: "#000",
-                    height: 150,
-                    endIcon: <CheckIcon size={5} />,
-                  }}
-                  mt="1"
-                  onValueChange={(itemValue) =>
-                    setCreatedQuestionState((prevState: any) => ({
+                <Radio.Group
+                  name="myRadioGroup"
+                  accessibilityLabel="favorite number"
+                  value={createAnswerState.isCorrect}
+                  onChange={(nextValue) => {
+                    setCreatedAnswerState((prevState: any) => ({
                       ...prevState,
-                      questionType: itemValue,
-                      error: "",
-                    }))
-                  }
+                      isCorrect: nextValue,
+                    }));
+                  }}
                 >
-                  <Select.Item
-                    label="Multiple Choice"
-                    value="multiple-choice"
-                  />
-                  <Select.Item label="Open Ended" value="open" />
-                </Select>
+                  <Radio value="true" my={1}>
+                    Is correct answer
+                  </Radio>
+                </Radio.Group>
               </FormControl>
             </ModalComponent>
           ) : (
             <View>
+              <Pressable onPress={() => router.back()}>
+                <MaterialIcons
+                  name="chevron-left"
+                  size={48}
+                  style={{ color: "#1d78d6", marginLeft: -15 }}
+                />
+              </Pressable>
               <View style={styles.section1}>
-                <Pressable onPress={() => router.push("/quiz/")}>
-                  <MaterialIcons
-                    name="chevron-left"
-                    size={48}
-                    style={{ color: "#1d78d6" }}
-                  />
-                </Pressable>
-                <View>
-                  <Text style={styles.title}>{quizState.title}</Text>
-                </View>
+                <Text
+                  style={{
+                    fontSize: 18,
+                  }}
+                >
+                  Answer Content:{" "}
+                </Text>
+                <Text style={styles.title}>{quizState.question}</Text>
               </View>
               <View
                 style={{
                   backgroundColor:
-                    quizState.status === "draft" ? "#BC9916" : "#245B2C",
-                  width: 100,
+                    quizState.type === "open" ? "grey" : "#245B2C",
+                  width: 200,
                   borderRadius: 50,
                   marginVertical: "10%",
                 }}
               >
-                <Text style={styles.status}>{quizState.status}</Text>
+                <Text style={styles.status}>{quizState.type}</Text>
               </View>
-              <View style={styles.section2}>
+              {quizState.type !== "open" && (
                 <View>
-                  <Text style={styles.subTitle}>Questions</Text>
-                </View>
-                <CustomButton
-                  style={{
-                    backgroundColor: "#1d78d6",
-                    borderColor: "#1d78d6",
-                    width: 50,
-                    height: 55,
-                  }}
-                  onPressBtn={() => handleOpenCloseModel(true)}
-                >
-                  <MaterialIcons name="add-circle" size={24} color="#fff" />
-                </CustomButton>
-              </View>
+                  <View style={styles.section2}>
+                    <View>
+                      <Text style={styles.subTitle}>Answer Options</Text>
+                    </View>
+                    <CustomButton
+                      style={{
+                        backgroundColor: "#1d78d6",
+                        borderColor: "#1d78d6",
+                        width: 50,
+                        height: 55,
+                      }}
+                      onPressBtn={() => handleOpenCloseModel(true)}
+                    >
+                      <MaterialIcons name="add-circle" size={24} color="#fff" />
+                    </CustomButton>
+                  </View>
 
-              <CustomView style={styles.separator} customColor="#1d78d6" />
-              <FlatList
-                data={quizQuestionsState}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item, index }) => (
-                  <QuestionDetails
-                    {...item}
-                    questionNbr={index + 1}
-                    title={item.title}
-                    status={item?.status}
+                  <CustomView style={styles.separator} customColor="#1d78d6" />
+                  <FlatList
+                    data={answersState}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item, index }) => (
+                      <AnswerDetails {...item} optionNbr={index + 1} />
+                    )}
                   />
-                )}
-              />
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -206,14 +201,11 @@ export default QuizScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingTop: 50,
     paddingHorizontal: 16,
   },
   section1: {
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginLeft: -15,
+    marginHorizontal: 10,
+    marginTop: "10%",
   },
   section2: {
     flexDirection: "row",
@@ -221,9 +213,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 28,
+    paddingVertical: 10,
+    fontSize: 24,
     fontWeight: "700",
-    color: "#1d78d6",
   },
   subTitle: {
     fontSize: 24,
