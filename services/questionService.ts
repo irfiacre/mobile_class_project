@@ -134,3 +134,19 @@ export const findQuestionById = async (
     console.log(error);
   }
 };
+
+export const deleteQuestionById = async (
+  db: SQLiteDatabase,
+  questionId: string
+) => {
+  let recordDeleted = false;
+  try {
+    await db.transaction((tx) => {
+      tx.executeSql("delete from questions where id=?", [questionId]);
+    });
+    recordDeleted = true;
+  } catch (error) {
+    console.log(error);
+  }
+  return recordDeleted;
+};

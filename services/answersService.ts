@@ -38,7 +38,6 @@ export const findAnswersData = async (
   } catch (error) {
     console.log(error);
   }
-  //   console.log("----", result.rows);
   return result;
 };
 
@@ -98,8 +97,6 @@ export const findQuestionAnswersById = async (
         "select * from answers where question_id=?",
         [quizId]
       );
-      console.log(result);
-
       if (result.rows) {
         handleFoundData(result.rows);
       } else {
@@ -131,4 +128,20 @@ export const findAnswerById = async (
   } catch (error) {
     console.log(error);
   }
+};
+
+export const deleteAnswerById = async (
+  db: SQLiteDatabase,
+  answerId: string
+) => {
+  let recordDeleted = false;
+  try {
+    await db.transaction((tx) => {
+      tx.executeSql("delete from answers where id=?", [answerId]);
+    });
+    recordDeleted = true;
+  } catch (error) {
+    console.log(error);
+  }
+  return recordDeleted;
 };

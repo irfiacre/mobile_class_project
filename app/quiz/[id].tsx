@@ -55,7 +55,6 @@ const QuizScreen = () => {
   };
   const router = useRouter();
   const foundQuizQuestionsDataLocally = (data: any) => {
-    console.log(")))))))))", data);
     setQuestionsState(data);
   };
   useEffect(() => {
@@ -65,7 +64,6 @@ const QuizScreen = () => {
         id.toString(),
         foundQuizQuestionsDataLocally
       );
-      console.log("---- await");
     })();
   }, [createQuestionState.quizSaved]);
 
@@ -171,7 +169,7 @@ const QuizScreen = () => {
               <View
                 style={{
                   backgroundColor:
-                    quizState.status === "draft" ? "#BC9916" : "#245B2C",
+                    quizState.status === "draft" ? "#BC9916" : "#439D44",
                   width: 100,
                   borderRadius: 50,
                   marginVertical: "10%",

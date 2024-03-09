@@ -1,28 +1,28 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { View as CustomView } from "@/components/Themed";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { IconButton } from "native-base";
 
 const QuestionDetails = (props: any) => {
   const { id, content, is_correct, optionNbr, handleDelete } = props;
 
-  const router = useRouter();
-
   return (
     <View>
-      <Pressable
+      <View
         style={[
           styles.Question,
-          { backgroundColor: is_correct == "true" ? "#004225" : "#DFE3E6" },
+          {
+            backgroundColor: is_correct == "true" ? "#1d78d6" : "#DFE3E6",
+          },
         ]}
-        onPress={() => console.log("-------")}
       >
         <View style={styles.QuestionDetails}>
           <Text
             style={[
               styles.number,
-              { color: is_correct == "true" ? "#fff" : "" },
+              { color: is_correct == "true" ? "#fff" : "grey" },
             ]}
           >
             {optionNbr}
@@ -31,16 +31,27 @@ const QuestionDetails = (props: any) => {
           <Text
             style={[
               styles.content,
-              { color: is_correct == "true" ? "#fff" : "" },
+              { color: is_correct == "true" ? "#fff" : "grey" },
             ]}
           >
             {content}
           </Text>
         </View>
-        <View>
-          <MaterialCommunityIcons name="delete" color="red" size={28} />
-        </View>
-      </Pressable>
+        <IconButton
+          onPress={() => handleDelete(id)}
+          icon={
+            <MaterialCommunityIcons
+              name="delete"
+              color={is_correct == "true" ? "#fff" : "grey"}
+              size={24}
+            />
+          }
+          borderRadius="full"
+          _pressed={{
+            backgroundColor: is_correct == "true" ? "grey" : "white",
+          }}
+        />
+      </View>
     </View>
   );
 };

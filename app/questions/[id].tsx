@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { openDatabase } from "@/services/quizService";
 import {
   CustomButton,
@@ -13,19 +13,30 @@ import ModalComponent from "@/components/Model";
 import {
   addAnswer,
   createAnswersTable,
+  deleteAnswerById,
   findQuestionAnswersById,
 } from "@/services/answersService";
 import { generateRandomString } from "@/util/helpers";
-import { FormControl, Radio } from "native-base";
+import { FormControl, IconButton, Radio } from "native-base";
 import { FlatList } from "react-native-gesture-handler";
 import AnswerDetails from "@/components/card/AnswerCard";
-import { findQuestionById } from "@/services/questionService";
+import {
+  deleteQuestionById,
+  findQuestionById,
+} from "@/services/questionService";
+import ActionItems from "@/components/ActionItems";
+import { useToast } from "react-native-toast-notifications";
 
+// const EditModel =
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
-  console.log("answer ID", id);
 
   const db = openDatabase();
+  const [fetchData, setFetchData] = useState({
+    loading: true,
+    updateData: true,
+  });
+
   const [quizState, setQuizState] = useState<any>({});
   const [modelValue, setModel] = useState(false);
 
@@ -33,6 +44,7 @@ const QuizScreen = () => {
   const router = useRouter();
   const foundQuestionDataLocally = (data: any) => {
     setQuizState(data[0]);
+    setFetchData({ loading: false, updateData: false });
   };
 
   useEffect(() => {
@@ -48,11 +60,15 @@ const QuizScreen = () => {
   });
   const [answersState, setAnswersState] = useState([]);
   const foundAnswersDataLocally = (data: any) => {
+    console.log("=======", data);
+
     setAnswersState(data);
+    setFetchData({ loading: false, updateData: false });
   };
   useEffect(() => {
     findQuestionAnswersById(db, id.toString(), foundAnswersDataLocally);
-  }, []);
+  }, [fetchData.updateData]);
+
   const handleCreateQuizAnswer = () => {
     if (createAnswerState.content == "") {
       setCreatedAnswerState((prevState: any) => ({
@@ -72,9 +88,38 @@ const QuizScreen = () => {
       ...prevState,
       quizSaved: true,
     }));
+    setFetchData({ loading: true, updateData: true });
+
     handleOpenCloseModel(false);
   };
-  console.log("=====>>", answersState);
+
+  const handleDeleteAnswer = (answerId: string) => {
+    deleteAnswerById(db, answerId);
+    setFetchData({ loading: true, updateData: true });
+  };
+
+  console.log(answersState, quizState);
+
+  const toast = useToast();
+  const handleDeleteQuestion = () => {
+    if (!answersState[0]) {
+      deleteQuestionById(db, id.toString());
+      router.push({
+        pathname: "/quiz/[id]",
+        params: { id: quizState.quiz_id },
+      });
+    } else {
+      toast.show("Unable to delete Question, Please first delete all answers", {
+        type: "danger",
+        id: generateRandomString("toast"),
+      });
+    }
+  };
+  const [editMode, setEditMode] = useState({
+    modelOpen: false,
+    content: quizState.question,
+  });
+  const handleSubmitQuestionEdit = () => {};
 
   return (
     <View style={styles.container}>
@@ -129,7 +174,14 @@ const QuizScreen = () => {
             </ModalComponent>
           ) : (
             <View>
-              <Pressable onPress={() => router.back()}>
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/quiz/[id]",
+                    params: { id: quizState.quiz_id },
+                  })
+                }
+              >
                 <MaterialIcons
                   name="chevron-left"
                   size={48}
@@ -137,19 +189,39 @@ const QuizScreen = () => {
                 />
               </Pressable>
               <View style={styles.section1}>
-                <Text
-                  style={{
-                    fontSize: 18,
-                  }}
-                >
-                  Answer Content:{" "}
-                </Text>
                 <Text style={styles.title}>{quizState.question}</Text>
+                <ActionItems
+                  handleEdit={() =>
+                    setEditMode((prevState) => ({
+                      ...prevState,
+                      modelOpen: true,
+                    }))
+                  }
+                  handleDelete={() => handleDeleteQuestion()}
+                />
               </View>
+
+              {editMode.modelOpen && (
+                <ModalComponent>
+                  <TextInput
+                    isMessageBox={true}
+                    onInputChangeText={(_, text: string) => {
+                      setCreatedAnswerState((prevState: any) => ({
+                        ...prevState,
+                        error: "",
+                        content: text,
+                      }));
+                    }}
+                    textValue={editMode.content}
+                    identifier="Edit question"
+                  />
+                </ModalComponent>
+              )}
+
               <View
                 style={{
                   backgroundColor:
-                    quizState.type === "open" ? "grey" : "#245B2C",
+                    quizState.type === "open" ? "grey" : "#439D44",
                   width: 200,
                   borderRadius: 50,
                   marginVertical: "10%",
@@ -181,7 +253,11 @@ const QuizScreen = () => {
                     data={answersState}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => (
-                      <AnswerDetails {...item} optionNbr={index + 1} />
+                      <AnswerDetails
+                        {...item}
+                        optionNbr={index + 1}
+                        handleDelete={handleDeleteAnswer}
+                      />
                     )}
                   />
                 </View>
@@ -204,6 +280,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   section1: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginHorizontal: 10,
     marginTop: "10%",
   },
@@ -216,6 +295,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 24,
     fontWeight: "700",
+    width: "80%",
   },
   subTitle: {
     fontSize: 24,
