@@ -31,7 +31,6 @@ export const findUser = async (db: SQLiteDatabase) => {
   } catch (error) {
     console.log(error);
   }
-  //   console.log("----", result.rows);
   return result;
 };
 

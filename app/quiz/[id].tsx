@@ -1,7 +1,13 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
 import { findQuizById, openDatabase } from "@/services/quizService";
 import {
   CustomButton,
@@ -40,6 +46,7 @@ const QuizScreen = () => {
   });
   const [modelValue, setModel] = useState(false);
   const [quizQuestionsState, setQuestionsState] = useState<any>([]);
+  const [refreshState, setRefreshState] = useState(false);
 
   const handleOpenCloseModel = (condition: boolean) => {
     if (condition) {
@@ -56,6 +63,7 @@ const QuizScreen = () => {
   const router = useRouter();
   const foundQuizQuestionsDataLocally = (data: any) => {
     setQuestionsState(data);
+    setRefreshState(false);
   };
   useEffect(() => {
     (async () => {
@@ -65,7 +73,7 @@ const QuizScreen = () => {
         foundQuizQuestionsDataLocally
       );
     })();
-  }, [createQuestionState.quizSaved]);
+  }, [createQuestionState.quizSaved, refreshState]);
 
   const handleCreateQuizQuestion = () => {
     if (createQuestionState.question == "") {
@@ -155,15 +163,26 @@ const QuizScreen = () => {
           ) : (
             <View>
               <View style={styles.section1}>
-                <Pressable onPress={() => router.push("/quiz/")}>
-                  <MaterialIcons
-                    name="chevron-left"
-                    size={48}
-                    style={{ color: "#1d78d6" }}
-                  />
-                </Pressable>
+                <View style={styles.quizTitle}>
+                  <Pressable onPress={() => router.push("/quiz/")}>
+                    <MaterialIcons
+                      name="chevron-left"
+                      size={48}
+                      style={{ color: "#1d78d6" }}
+                    />
+                  </Pressable>
+                  <View>
+                    <Text style={styles.title}>{quizState.title}</Text>
+                  </View>
+                </View>
                 <View>
-                  <Text style={styles.title}>{quizState.title}</Text>
+                  <TouchableOpacity onPress={() => setRefreshState(true)}>
+                    <MaterialIcons
+                      name="refresh"
+                      size={38}
+                      style={{ color: "#1d78d6" }}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
               <View
@@ -181,17 +200,19 @@ const QuizScreen = () => {
                 <View>
                   <Text style={styles.subTitle}>Questions</Text>
                 </View>
-                <CustomButton
-                  style={{
-                    backgroundColor: "#1d78d6",
-                    borderColor: "#1d78d6",
-                    width: 50,
-                    height: 55,
-                  }}
-                  onPressBtn={() => handleOpenCloseModel(true)}
-                >
-                  <MaterialIcons name="add-circle" size={24} color="#fff" />
-                </CustomButton>
+                <View>
+                  <CustomButton
+                    style={{
+                      backgroundColor: "#1d78d6",
+                      borderColor: "#1d78d6",
+                      paddingVertical: 10,
+                      paddingHorizontal: 10,
+                    }}
+                    onPressBtn={() => handleOpenCloseModel(true)}
+                  >
+                    <MaterialIcons name="add-circle" size={32} color="#fff" />
+                  </CustomButton>
+                </View>
               </View>
 
               <CustomView style={styles.separator} customColor="#1d78d6" />
@@ -222,14 +243,19 @@ export default QuizScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingTop: 50,
+    paddingTop: 10,
     paddingHorizontal: 16,
   },
   section1: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
     marginLeft: -15,
+  },
+  quizTitle: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   section2: {
     flexDirection: "row",

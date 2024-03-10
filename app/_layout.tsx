@@ -53,7 +53,6 @@ function RootLayoutNav() {
     //   setUserInfo(JSON.parse(user || "null"));
     // })();
     createUsersTable(db);
-    console.log("--------", createUsersTable(db));
   }, []);
 
   const handleLogout = () => {

@@ -35,7 +35,6 @@ const ContactScreen = () => {
       setContactState(contactInfo);
     })();
   }, []);
-  console.log("----", contactState);
 
   return (
     <View style={styles.container}>

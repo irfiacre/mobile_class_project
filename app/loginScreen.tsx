@@ -34,8 +34,6 @@ const LoginScreen = () => {
   });
 
   useEffect(() => {
-    console.log("=====", findUser(db));
-
     handleSignInWithGoogle();
   }, [promptAsync]);
 

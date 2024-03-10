@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { openDatabase } from "@/services/quizService";
 import {
   CustomButton,
@@ -16,7 +16,7 @@ import {
   deleteAnswerById,
   findQuestionAnswersById,
 } from "@/services/answersService";
-import { generateRandomString } from "@/util/helpers";
+import { generateRandomString, primaryColor } from "@/util/helpers";
 import { FormControl, IconButton, Radio } from "native-base";
 import { FlatList } from "react-native-gesture-handler";
 import AnswerDetails from "@/components/card/AnswerCard";
@@ -26,6 +26,7 @@ import {
 } from "@/services/questionService";
 import ActionItems from "@/components/ActionItems";
 import { useToast } from "react-native-toast-notifications";
+import Checkbox from "expo-checkbox";
 
 // const EditModel =
 const QuizScreen = () => {
@@ -60,8 +61,6 @@ const QuizScreen = () => {
   });
   const [answersState, setAnswersState] = useState([]);
   const foundAnswersDataLocally = (data: any) => {
-    console.log("=======", data);
-
     setAnswersState(data);
     setFetchData({ loading: false, updateData: false });
   };
@@ -97,8 +96,6 @@ const QuizScreen = () => {
     deleteAnswerById(db, answerId);
     setFetchData({ loading: true, updateData: true });
   };
-
-  console.log(answersState, quizState);
 
   const toast = useToast();
   const handleDeleteQuestion = () => {
@@ -155,21 +152,29 @@ const QuizScreen = () => {
                     {createAnswerState.error}
                   </Text>
                 )}
-                <Radio.Group
-                  name="myRadioGroup"
-                  accessibilityLabel="favorite number"
-                  value={createAnswerState.isCorrect}
-                  onChange={(nextValue) => {
-                    setCreatedAnswerState((prevState: any) => ({
-                      ...prevState,
-                      isCorrect: nextValue,
-                    }));
-                  }}
-                >
-                  <Radio value="true" my={1}>
+
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Checkbox
+                    style={styles.checkbox}
+                    value={createAnswerState.isCorrect == "true"}
+                    onValueChange={(newValue) => {
+                      console.log(newValue);
+
+                      setCreatedAnswerState((prevState: any) => ({
+                        ...prevState,
+                        isCorrect: `${newValue}`,
+                      }));
+                    }}
+                    color={
+                      createAnswerState.isCorrect == "true"
+                        ? primaryColor
+                        : undefined
+                    }
+                  />
+                  <FormControl.Label fontSize={24}>
                     Is correct answer
-                  </Radio>
-                </Radio.Group>
+                  </FormControl.Label>
+                </View>
               </FormControl>
             </ModalComponent>
           ) : (
@@ -235,24 +240,36 @@ const QuizScreen = () => {
                     <View>
                       <Text style={styles.subTitle}>Answer Options</Text>
                     </View>
-                    <CustomButton
-                      style={{
-                        backgroundColor: "#1d78d6",
-                        borderColor: "#1d78d6",
-                        width: 50,
-                        height: 55,
-                      }}
-                      onPressBtn={() => handleOpenCloseModel(true)}
-                    >
-                      <MaterialIcons name="add-circle" size={24} color="#fff" />
-                    </CustomButton>
+                    <View>
+                      <CustomButton
+                        style={{
+                          backgroundColor: "#1d78d6",
+                          borderColor: "#1d78d6",
+                          paddingVertical: 10,
+                          paddingHorizontal: 10,
+                        }}
+                        onPressBtn={() => handleOpenCloseModel(true)}
+                      >
+                        <MaterialIcons
+                          name="add-circle"
+                          size={24}
+                          color="#fff"
+                        />
+                      </CustomButton>
+                    </View>
                   </View>
 
                   <CustomView style={styles.separator} customColor="#1d78d6" />
                   <FlatList
                     data={answersState}
                     keyExtractor={(item) => item.id}
-                    renderItem={({ item, index }) => (
+                    renderItem={({
+                      item,
+                      index,
+                    }: {
+                      item: any;
+                      index: number;
+                    }) => (
                       <AnswerDetails
                         {...item}
                         optionNbr={index + 1}
@@ -278,6 +295,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
+    paddingTop: 10,
   },
   section1: {
     flexDirection: "row",
@@ -318,5 +336,8 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     color: "#fff",
     textAlign: "center",
+  },
+  checkbox: {
+    margin: 8,
   },
 });

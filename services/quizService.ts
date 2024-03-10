@@ -36,7 +36,6 @@ export const findQuizData = async (
   } catch (error) {
     console.log(error);
   }
-  //   console.log("----", result.rows);
   return result;
 };
 

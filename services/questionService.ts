@@ -38,7 +38,6 @@ export const findQuestionData = async (
   } catch (error) {
     console.log(error);
   }
-  //   console.log("----", result.rows);
   return result;
 };
 

@@ -12,13 +12,13 @@ const QuestionDetails = (props: any) => {
     <View>
       <View
         style={[
-          styles.Question,
+          styles.answer,
           {
             backgroundColor: is_correct == "true" ? "#1d78d6" : "#DFE3E6",
           },
         ]}
       >
-        <View style={styles.QuestionDetails}>
+        <View style={styles.answerDetails}>
           <Text
             style={[
               styles.number,
@@ -59,21 +59,23 @@ const QuestionDetails = (props: any) => {
 export default QuestionDetails;
 
 const styles = StyleSheet.create({
-  Question: {
+  answer: {
     flex: 1,
     padding: 5,
     justifyContent: "space-between",
     flexDirection: "row",
-    alignItems: "baseline",
+    alignItems: "center",
     borderColor: "#DFE3E6",
     backgroundColor: "#DFE3E6",
     borderRadius: 9,
     marginVertical: 5,
   },
-  QuestionDetails: { paddingVertical: 10, flexDirection: "row" },
+  answerDetails: { paddingVertical: 10, flexDirection: "row" },
   content: {
     fontSize: 24,
-    fontWeight: "700",
+    fontWeight: "500",
+    flexWrap: "wrap",
+    width: "75%",
   },
   type: {
     fontSize: 18,
