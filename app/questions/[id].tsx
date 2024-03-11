@@ -23,6 +23,7 @@ import AnswerDetails from "@/components/card/AnswerCard";
 import {
   deleteQuestionById,
   findQuestionById,
+  updateQuestion,
 } from "@/services/questionService";
 import ActionItems from "@/components/ActionItems";
 import { useToast } from "react-native-toast-notifications";
@@ -116,7 +117,18 @@ const QuizScreen = () => {
     modelOpen: false,
     content: quizState.question,
   });
-  const handleSubmitQuestionEdit = () => {};
+  const handleSubmitQuestionEdit = () => {
+    updateQuestion(db, {
+      id: id.toString(),
+      question: editMode.content,
+    });
+    setCreatedAnswerState((prevState: any) => ({
+      ...prevState,
+      quizSaved: true,
+    }));
+    setFetchData({ loading: true, updateData: true });
+    handleOpenCloseModel(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -124,58 +136,79 @@ const QuizScreen = () => {
         <View>
           {modelValue ? (
             <ModalComponent
-              title="New Quiz Answer"
+              title={editMode.modelOpen ? "Edit" : "New Quiz Answer"}
               isOpen
               handleCloseModel={() => handleOpenCloseModel(false)}
-              handleOnSave={handleCreateQuizAnswer}
+              handleOnSave={
+                editMode.modelOpen
+                  ? handleSubmitQuestionEdit
+                  : handleCreateQuizAnswer
+              }
             >
-              <FormControl>
-                <FormControl.Label fontSize={18}>Content</FormControl.Label>
-                <TextInput
-                  isMessageBox={true}
-                  onInputChangeText={(_, text: string) => {
-                    setCreatedAnswerState((prevState: any) => ({
-                      ...prevState,
-                      error: "",
-                      content: text,
-                    }));
-                  }}
-                  textValue={createAnswerState.content}
-                  identifier="Answer Content"
-                  style={{
-                    borderColor:
-                      createAnswerState.error !== "" ? "red" : "grey",
-                  }}
-                />
-                {createAnswerState.error !== "" && (
-                  <Text style={{ color: "red" }}>
-                    {createAnswerState.error}
-                  </Text>
-                )}
-
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Checkbox
-                    style={styles.checkbox}
-                    value={createAnswerState.isCorrect == "true"}
-                    onValueChange={(newValue) => {
-                      console.log(newValue);
-
-                      setCreatedAnswerState((prevState: any) => ({
+              {editMode.modelOpen ? (
+                <FormControl>
+                  <TextInput
+                    isMessageBox={true}
+                    onInputChangeText={(_, text: string) => {
+                      setEditMode((prevState: any) => ({
                         ...prevState,
-                        isCorrect: `${newValue}`,
+                        error: "",
+                        content: text,
                       }));
                     }}
-                    color={
-                      createAnswerState.isCorrect == "true"
-                        ? primaryColor
-                        : undefined
-                    }
+                    textValue={editMode.content}
+                    identifier="Edit question"
                   />
-                  <FormControl.Label fontSize={24}>
-                    Is correct answer
-                  </FormControl.Label>
-                </View>
-              </FormControl>
+                </FormControl>
+              ) : (
+                <FormControl>
+                  <FormControl.Label fontSize={18}>Content</FormControl.Label>
+                  <TextInput
+                    isMessageBox={true}
+                    onInputChangeText={(_, text: string) => {
+                      setCreatedAnswerState((prevState: any) => ({
+                        ...prevState,
+                        error: "",
+                        content: text,
+                      }));
+                    }}
+                    textValue={createAnswerState.content}
+                    identifier="Answer Content"
+                    style={{
+                      borderColor:
+                        createAnswerState.error !== "" ? "red" : "grey",
+                    }}
+                  />
+                  {createAnswerState.error !== "" && (
+                    <Text style={{ color: "red" }}>
+                      {createAnswerState.error}
+                    </Text>
+                  )}
+
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Checkbox
+                      style={styles.checkbox}
+                      value={createAnswerState.isCorrect == "true"}
+                      onValueChange={(newValue) => {
+                        console.log(newValue);
+
+                        setCreatedAnswerState((prevState: any) => ({
+                          ...prevState,
+                          isCorrect: `${newValue}`,
+                        }));
+                      }}
+                      color={
+                        createAnswerState.isCorrect == "true"
+                          ? primaryColor
+                          : undefined
+                      }
+                    />
+                    <FormControl.Label fontSize={24}>
+                      Is correct answer
+                    </FormControl.Label>
+                  </View>
+                </FormControl>
+              )}
             </ModalComponent>
           ) : (
             <View>
@@ -196,32 +229,19 @@ const QuizScreen = () => {
               <View style={styles.section1}>
                 <Text style={styles.title}>{quizState.question}</Text>
                 <ActionItems
-                  handleEdit={() =>
+                  hasPublish={false}
+                  handlePublish={() => null}
+                  handleEdit={() => {
                     setEditMode((prevState) => ({
                       ...prevState,
                       modelOpen: true,
-                    }))
-                  }
+                      content: quizState.question,
+                    }));
+                    handleOpenCloseModel(true);
+                  }}
                   handleDelete={() => handleDeleteQuestion()}
                 />
               </View>
-
-              {editMode.modelOpen && (
-                <ModalComponent>
-                  <TextInput
-                    isMessageBox={true}
-                    onInputChangeText={(_, text: string) => {
-                      setCreatedAnswerState((prevState: any) => ({
-                        ...prevState,
-                        error: "",
-                        content: text,
-                      }));
-                    }}
-                    textValue={editMode.content}
-                    identifier="Edit question"
-                  />
-                </ModalComponent>
-              )}
 
               <View
                 style={{

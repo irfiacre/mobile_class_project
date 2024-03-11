@@ -103,3 +103,36 @@ export const findQuizById = async (
     console.log(error);
   }
 };
+
+export const updateQuiz = async (
+  db: SQLiteDatabase,
+  quizObj: { id: string; newStatus: string; newTitle: string }
+) => {
+  const { id, newStatus, newTitle } = quizObj;
+  try {
+    db.transaction((tx) => {
+      tx.executeSql("update quizzes set title=?, status=? where id=?", [
+        newTitle,
+        newStatus,
+        id,
+      ]);
+    });
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const deleteQuizById = async (db: SQLiteDatabase, quizId: string) => {
+  let recordDeleted = false;
+  try {
+    await db.transaction((tx) => {
+      tx.executeSql("delete from quizzes where id=?", [quizId]);
+    });
+    recordDeleted = true;
+  } catch (error) {
+    console.log(error);
+  }
+  return recordDeleted;
+};

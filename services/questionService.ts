@@ -97,8 +97,6 @@ export const findQuizQuestionsById = async (
         "select * from questions where quiz_id=?",
         [quizId]
       );
-      console.log(result);
-
       if (result.rows) {
         handleFoundData(result.rows);
       } else {
@@ -121,7 +119,6 @@ export const findQuestionById = async (
         "select * from questions where id=?",
         [questionId]
       );
-      console.log(result);
 
       if (result.rows) {
         handleFoundData(result.rows);
@@ -148,4 +145,23 @@ export const deleteQuestionById = async (
     console.log(error);
   }
   return recordDeleted;
+};
+
+export const updateQuestion = async (
+  db: SQLiteDatabase,
+  quizObj: { id: string; question: string }
+) => {
+  const { id, question } = quizObj;
+  try {
+    db.transaction((tx) => {
+      tx.executeSql("update questions set question=? where id=?", [
+        question,
+        id,
+      ]);
+    });
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 };

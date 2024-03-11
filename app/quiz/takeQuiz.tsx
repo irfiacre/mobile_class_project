@@ -5,9 +5,9 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import { EvilIcons, MaterialIcons } from "@expo/vector-icons";
 import {
   deleteQuizById,
   findQuizById,
@@ -33,25 +33,21 @@ import { FlatList } from "react-native-gesture-handler";
 import QuestionDetails from "@/components/card/QuestionCard";
 import ActionItems from "@/components/ActionItems";
 import { useToast } from "react-native-toast-notifications";
-import {
-  registerForPushNotificationsAsync,
-  sendPushNotification,
-} from "@/util/pushNotification";
-import * as Notifications from "expo-notifications";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
-const QuizScreen = () => {
+const TakeQuizScreen = () => {
   const { id } = useLocalSearchParams();
-  const db = openDatabase();
   const [quizState, setQuizState] = useState<any>({});
   const [refreshState, setRefreshState] = useState(false);
+  const foundQuizDataLocally = (data: any) => {
+    setQuizState(data[0]);
+    setRefreshState(false);
+    setEditMode((prevState: any) => ({ ...prevState, content: data[0].title }));
+  };
+
+  useEffect(() => {
+    findQuizById(db, id.toString(), foundQuizDataLocally);
+  }, [refreshState]);
+  const db = openDatabase();
   const [createQuestionState, setCreatedQuestionState] = useState({
     error: "",
     questionType: "",
@@ -61,30 +57,7 @@ const QuizScreen = () => {
   });
   const [modelValue, setModel] = useState(false);
   const [quizQuestionsState, setQuestionsState] = useState<any>([]);
-  const [editMode, setEditMode] = useState({
-    modelOpen: false,
-    content: quizState.title ? quizState.title : "",
-  });
 
-  useEffect(() => {
-    findQuizById(db, id.toString(), foundQuizDataLocally);
-  }, [refreshState]);
-
-  useEffect(() => {
-    (async () => {
-      await findQuizQuestionsById(
-        db,
-        id.toString(),
-        foundQuizQuestionsDataLocally
-      );
-    })();
-  }, [createQuestionState.quizSaved, refreshState]);
-
-  const foundQuizDataLocally = (data: any) => {
-    setQuizState(data[0]);
-    setRefreshState(false);
-    setEditMode((prevState: any) => ({ ...prevState, content: data[0].title }));
-  };
   const handleOpenCloseModel = (condition: boolean) => {
     if (condition) {
       setCreatedQuestionState({
@@ -102,6 +75,16 @@ const QuizScreen = () => {
     setQuestionsState(data);
     setRefreshState(false);
   };
+  useEffect(() => {
+    (async () => {
+      await findQuizQuestionsById(
+        db,
+        id.toString(),
+        foundQuizQuestionsDataLocally
+      );
+    })();
+  }, [createQuestionState.quizSaved, refreshState]);
+
   const handleCreateQuizQuestion = () => {
     if (createQuestionState.question == "") {
       setCreatedQuestionState((prevState: any) => ({
@@ -125,6 +108,23 @@ const QuizScreen = () => {
     handleOpenCloseModel(false);
   };
 
+  const toast = useToast();
+  const handleDeleteQuestion = () => {
+    if (!quizQuestionsState[0]) {
+      deleteQuizById(db, id.toString());
+      router.push("/quiz/");
+    } else {
+      toast.show("Unable to delete QUIZ, Please first delete all Questions", {
+        type: "danger",
+        id: generateRandomString("toast"),
+      });
+    }
+  };
+  const [editMode, setEditMode] = useState({
+    modelOpen: false,
+    content: quizState.title ? quizState.title : "",
+  });
+
   const handleSubmitQuizEdit = () => {
     updateQuiz(db, {
       id: id.toString(),
@@ -136,50 +136,6 @@ const QuizScreen = () => {
     handleOpenCloseModel(false);
   };
 
-  const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] = useState(false);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
-
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
-      });
-
-    return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current
-      );
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
-  }, []);
-  const toast = useToast();
-  const handleDeleteQuestion = () => {
-    if (!quizQuestionsState[0]) {
-      deleteQuizById(db, id.toString());
-      router.push("/quiz/");
-      sendPushNotification({
-        expoPushToken,
-        title: `Quiz: ${id.toString()}`,
-        messageTxt: "Deleted successfully!",
-      });
-    } else {
-      toast.show("Unable to delete QUIZ, Please first delete all Questions", {
-        type: "danger",
-        id: generateRandomString("toast"),
-      });
-    }
-  };
   return (
     <View style={styles.container}>
       {quizState.title ? (
@@ -363,7 +319,7 @@ const QuizScreen = () => {
   );
 };
 
-export default QuizScreen;
+export default TakeQuizScreen;
 
 const styles = StyleSheet.create({
   container: {

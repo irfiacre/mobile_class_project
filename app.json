@@ -17,14 +17,26 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "irfiacre.class"
+      "bundleIdentifier": "irfiacre.class",
+      "infoPlist": {
+        "NSContactsUsageDescription": "Allow $(24866) to access your contacts.",
+        "NSPhotoLibraryUsageDescription": "Allow $(24866) to access your photos.",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(24866) to save photos."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.irfiacre.rn_class_project"
+      "package": "com.irfiacre.rn_class_project",
+      "permissions": [
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -50,6 +62,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c8422c31-5b96-49b5-b6af-c490e6146ca4"
+      }
     }
   }
 }
