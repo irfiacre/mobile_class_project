@@ -12,12 +12,11 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "irfiacre.class",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSContactsUsageDescription": "Allow $(24866) to access your contacts.",
         "NSPhotoLibraryUsageDescription": "Allow $(24866) to access your photos.",
@@ -25,6 +24,7 @@
       }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -57,6 +57,15 @@
           "photosPermission": "Allow $(24866) to access your photos.",
           "savePhotosPermission": "Allow $(24866) to save photos.",
           "isAccessMediaLocationEnabled": true
+        }
+      ],
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
         }
       ]
     ],

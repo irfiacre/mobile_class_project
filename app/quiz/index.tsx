@@ -18,6 +18,7 @@ import {
 const QuizScreen = () => {
   const db = openDatabase();
   const [quizData, setQuizData] = useState<any>([]);
+    const [refreshState, setRefreshState] = useState(false);
   const [createQuizState, setCreateDQuizState] = useState({
     title: "",
     error: "",

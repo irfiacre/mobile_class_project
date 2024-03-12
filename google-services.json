@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "10924546893",
+    "project_id": "react-native-mobile-class",
+    "storage_bucket": "react-native-mobile-class.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:10924546893:android:14c410192bf9416e053504",
+        "android_client_info": {
+          "package_name": "com.irfiacre.rn_class_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCn5t_9oIxVN7fsJEvJoTMConC0DYe0hk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
