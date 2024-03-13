@@ -14,11 +14,15 @@ import {
   findQuizData,
   openDatabase,
 } from "@/services/quizService";
+import { getQuizzes } from "@/services/firebaseService";
+import SkeletonComponent from "@/components/SkeletonComponent";
 
 const QuizScreen = () => {
   const db = openDatabase();
   const [quizData, setQuizData] = useState<any>([]);
-    const [refreshState, setRefreshState] = useState(false);
+  const [publishedQuizState, setPublishedQuizState] = useState<any[]>([]);
+
+  const [refreshState, setRefreshState] = useState(false);
   const [createQuizState, setCreateDQuizState] = useState({
     title: "",
     error: "",
@@ -31,6 +35,13 @@ const QuizScreen = () => {
 
   useEffect(() => {
     findQuizData(db, foundQuizDataLocally);
+    const getPublishedData = async () => {
+      const publishedQuizzes = await getQuizzes();
+      if (publishedQuizzes) {
+        setPublishedQuizState(publishedQuizzes);
+      }
+    };
+    getPublishedData();
   }, [createQuizState.quizSaved]);
 
   const [modelValue, setModel] = useState(false);
@@ -104,18 +115,48 @@ const QuizScreen = () => {
               data={quizData}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <QuizDetails
-                  {...item}
-                  title={item.title}
-                  status={item?.status}
-                />
+                <View>
+                  {!publishedQuizState[0] ? (
+                    <SkeletonComponent
+                      numberOfSkeletons={2}
+                      startColor="#E2E8F0"
+                    />
+                  ) : (
+                    <QuizDetails
+                      {...item}
+                      title={item.title}
+                      status={item?.status}
+                    />
+                  )}
+                </View>
               )}
             />
           )}
-
-          <Text style={{ ...styles.title, fontWeight: "500" }}>
-            More Quizzes
-          </Text>
+          <View>
+            <Text style={{ ...styles.title, fontWeight: "500" }}>
+              More Quizzes
+            </Text>
+            <FlatList
+              data={publishedQuizState}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View>
+                  {!publishedQuizState[0] ? (
+                    <SkeletonComponent
+                      numberOfSkeletons={3}
+                      startColor="#E2E8F0"
+                    />
+                  ) : (
+                    <QuizDetails
+                      {...item}
+                      title={item.title}
+                      status={item?.status}
+                    />
+                  )}
+                </View>
+              )}
+            />
+          </View>
         </View>
       ) : (
         <Loading />

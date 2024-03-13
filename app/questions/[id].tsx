@@ -102,7 +102,7 @@ const QuizScreen = () => {
   const handleDeleteQuestion = () => {
     if (!answersState[0]) {
       deleteQuestionById(db, id.toString());
-      router.push({
+      router.navigate({
         pathname: "/quiz/[id]",
         params: { id: quizState.quiz_id },
       });

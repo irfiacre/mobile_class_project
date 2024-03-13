@@ -38,6 +38,12 @@ import {
   sendPushNotification,
 } from "@/util/pushNotification";
 import * as Notifications from "expo-notifications";
+import {
+  addQuestionsToQuiz,
+  createQuiz,
+  getQuizzes,
+} from "@/services/firebaseService";
+import Spinner from "react-native-loading-spinner-overlay";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -180,8 +186,36 @@ const QuizScreen = () => {
       });
     }
   };
+  const onPublish = async () => {
+    const quizObj = {
+      id: quizState.id,
+      title: quizState.title,
+      status: quizState.status,
+    };
+    const quizCreated = await createQuiz(quizObj, setRefreshState);
+    const quizQuestions = await findQuizQuestionsById(
+      db,
+      id.toString(),
+      () => {}
+    );
+    if (quizCreated && quizQuestionsState[0]) {
+      const questionsAdded = await addQuestionsToQuiz(
+        id.toString(),
+        quizQuestionsState
+      );
+      if (questionsAdded) {
+        console.log("========== ^-? ==============");
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <Spinner
+        visible={refreshState}
+        textContent={"Updating..."}
+        textStyle={styles.spinnerTextStyle}
+      />
       {quizState.title ? (
         <View>
           {modelValue ? (
@@ -310,7 +344,7 @@ const QuizScreen = () => {
                 </View>
                 <ActionItems
                   hasPublish
-                  handlePublish={() => null}
+                  handlePublish={() => onPublish()}
                   handleEdit={() => {
                     setEditMode((prevState) => ({
                       ...prevState,
@@ -413,5 +447,8 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     color: "#fff",
     textAlign: "center",
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
   },
 });
