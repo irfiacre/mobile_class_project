@@ -1,7 +1,6 @@
 import { findAnswersData } from "@/services/answersService";
 import {
   createDocEntry,
-  findDocEntryById,
   getCollectionEntries,
   updateDocEntry,
 } from "@/services/firebaseService";

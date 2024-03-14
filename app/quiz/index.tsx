@@ -10,7 +10,6 @@ import { TextInput } from "@/components/Themed";
 import {
   addQuiz,
   createQuizTable,
-  dropTableQuiz,
   findQuizData,
   openDatabase,
 } from "@/services/quizService";

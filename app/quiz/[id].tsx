@@ -10,7 +10,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   deleteQuizById,
-  dropTableQuiz,
   findQuizById,
   openDatabase,
   updateQuiz,
@@ -25,7 +24,6 @@ import ModalComponent from "@/components/Model";
 import {
   addQuestion,
   createQuestionTable,
-  dropTableQuestion,
   findQuizQuestionsById,
 } from "@/services/questionService";
 import { generateRandomString } from "@/util/helpers";
