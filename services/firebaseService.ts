@@ -29,6 +29,26 @@ export const createQuiz = async (
   }
 };
 
+export const createQuizQuestion = async (
+  docObj: any,
+  setLoading: (value: boolean) => void
+) => {
+  setLoading(true);
+  try {
+    const quizDocRef = doc(database, "quizzes", docObj.quizId);
+    const questionsCollectionRef = collection(quizDocRef, "questions");
+
+    const addedEntry = await addDoc(questionsCollectionRef, docObj);
+    console.log(addedEntry);
+
+    setLoading(false);
+    return true;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    return false;
+  }
+};
+
 export const getQuizzes = async () => {
   let result: any[] = [];
   try {

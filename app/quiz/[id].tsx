@@ -41,6 +41,7 @@ import * as Notifications from "expo-notifications";
 import {
   addQuestionsToQuiz,
   createQuiz,
+  createQuizQuestion,
   getQuizzes,
 } from "@/services/firebaseService";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -193,13 +194,14 @@ const QuizScreen = () => {
       status: quizState.status,
     };
     const quizCreated = await createQuiz(quizObj, setRefreshState);
-    const quizQuestions = await findQuizQuestionsById(
-      db,
-      id.toString(),
-      () => {}
-    );
+
+    // const quizQuestions = await findQuizQuestionsById(
+    //   db,
+    //   id.toString(),
+    //   () => {}
+    // );
     if (quizCreated && quizQuestionsState[0]) {
-      const questionsAdded = await addQuestionsToQuiz(
+      const questionsAdded = await createQuizQuestion(
         id.toString(),
         quizQuestionsState
       );
@@ -208,6 +210,7 @@ const QuizScreen = () => {
       }
     }
   };
+  console.log("----", quizQuestionsState);
 
   return (
     <View style={styles.container}>
