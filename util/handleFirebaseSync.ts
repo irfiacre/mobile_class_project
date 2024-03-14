@@ -44,7 +44,7 @@ const handleSyncProcess = async (collectionName: string, localData: any) => {
     }
     return finished;
   } catch (error) {
-    console.log("Sync Process Error: ", error);
+    console.log("Sync Process Error:", error);
     return false;
   }
 };
