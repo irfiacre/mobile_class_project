@@ -30,7 +30,7 @@ export const findQuestionData = async (
   let result;
   try {
     await db.transactionAsync(async (tx) => {
-      const result = await tx.executeSqlAsync("SELECT * FROM QUIZZES", []);
+      const result = await tx.executeSqlAsync("select * from questions", []);
       if (result.rows) {
         handleFoundData(result.rows);
       }

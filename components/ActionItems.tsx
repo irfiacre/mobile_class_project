@@ -6,26 +6,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const ActionItems = (props: {
   handleEdit: () => void;
   handleDelete: () => void;
-  hasPublish: boolean;
-  handlePublish: () => void;
 }) => {
-  const { handleEdit, handleDelete, handlePublish, hasPublish } = props;
+  const { handleEdit, handleDelete } = props;
   return (
     <View style={styles.container}>
-      {hasPublish && (
-        <IconButton
-          onPress={() => handlePublish()}
-          icon={
-            <MaterialCommunityIcons
-              name="cloud-upload"
-              color="green"
-              size={32}
-            />
-          }
-          borderRadius="full"
-          _pressed={{ backgroundColor: "#DFE3E6" }}
-        />
-      )}
       <IconButton
         onPress={() => handleEdit()}
         icon={

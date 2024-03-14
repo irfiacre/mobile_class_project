@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useToast } from "react-native-toast-notifications";
 import { generateRandomString } from "@/util/helpers";
+import { handleSyncLocalToFirebase } from "@/util/handleFirebaseSync";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -13,8 +14,8 @@ export default function TabLayout() {
   const { type, isConnected } = useNetInfo();
 
   useEffect(() => {
-    console.log("....ConnectionInfo: ", type, isConnected);
     if (isConnected !== null) {
+      // Check for Internet availability
       const message = isConnected
         ? `${type} is connected successfully`
         : "Internet got disconnected";
@@ -23,6 +24,12 @@ export default function TabLayout() {
         type: isConnected ? "success" : "danger",
         id: generateRandomString("toast"),
       });
+      const syncLocal = async () => await handleSyncLocalToFirebase();
+      if (isConnected) {
+        syncLocal();
+      } else {
+        console.log(" Can not sync Data at the moment");
+      }
     }
   }, [type, isConnected]);
   return (

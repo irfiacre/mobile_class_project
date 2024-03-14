@@ -14,10 +14,22 @@ import {
   findQuizData,
   openDatabase,
 } from "@/services/quizService";
-import { getQuizzes } from "@/services/firebaseService";
+import { getCollectionEntries } from "@/services/firebaseService";
 import SkeletonComponent from "@/components/SkeletonComponent";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { handleSyncLocalToFirebase } from "@/util/handleFirebaseSync";
 
 const QuizScreen = () => {
+  const { type, isConnected } = useNetInfo();
+  useEffect(() => {
+    const syncLocal = async () => await handleSyncLocalToFirebase();
+
+    if (isConnected) {
+      syncLocal();
+    } else {
+      console.log(" Can not sync Data at the moment");
+    }
+  }, []);
   const db = openDatabase();
   const [quizData, setQuizData] = useState<any>([]);
   const [publishedQuizState, setPublishedQuizState] = useState<any[]>([]);
@@ -31,18 +43,19 @@ const QuizScreen = () => {
 
   const foundQuizDataLocally = (data: any) => {
     setQuizData(data);
+    setRefreshState(false);
   };
 
   useEffect(() => {
     findQuizData(db, foundQuizDataLocally);
     const getPublishedData = async () => {
-      const publishedQuizzes = await getQuizzes();
+      const publishedQuizzes = await getCollectionEntries("quizzes");
       if (publishedQuizzes) {
         setPublishedQuizState(publishedQuizzes);
       }
     };
     getPublishedData();
-  }, [createQuizState.quizSaved]);
+  }, [createQuizState.quizSaved, refreshState]);
 
   const [modelValue, setModel] = useState(false);
 
@@ -65,6 +78,7 @@ const QuizScreen = () => {
       quizSaved: true,
     }));
     handleOpenCloseModel(false);
+    setRefreshState(true);
   };
 
   return (
@@ -118,7 +132,7 @@ const QuizScreen = () => {
                 <View>
                   {!publishedQuizState[0] ? (
                     <SkeletonComponent
-                      numberOfSkeletons={2}
+                      numberOfSkeletons={1}
                       startColor="#E2E8F0"
                     />
                   ) : (

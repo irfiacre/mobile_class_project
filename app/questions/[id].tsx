@@ -28,8 +28,9 @@ import {
 import ActionItems from "@/components/ActionItems";
 import { useToast } from "react-native-toast-notifications";
 import Checkbox from "expo-checkbox";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { handleSyncLocalToFirebase } from "@/util/handleFirebaseSync";
 
-// const EditModel =
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
 
@@ -48,10 +49,6 @@ const QuizScreen = () => {
     setQuizState(data[0]);
     setFetchData({ loading: false, updateData: false });
   };
-
-  useEffect(() => {
-    findQuestionById(db, id.toString(), foundQuestionDataLocally);
-  }, []);
 
   const [createAnswerState, setCreatedAnswerState] = useState({
     error: "",
@@ -229,8 +226,6 @@ const QuizScreen = () => {
               <View style={styles.section1}>
                 <Text style={styles.title}>{quizState.question}</Text>
                 <ActionItems
-                  hasPublish={false}
-                  handlePublish={() => null}
                   handleEdit={() => {
                     setEditMode((prevState) => ({
                       ...prevState,

@@ -10,6 +10,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   deleteQuizById,
+  dropTableQuiz,
   findQuizById,
   openDatabase,
   updateQuiz,
@@ -38,13 +39,11 @@ import {
   sendPushNotification,
 } from "@/util/pushNotification";
 import * as Notifications from "expo-notifications";
-import {
-  addQuestionsToQuiz,
-  createQuiz,
-  createQuizQuestion,
-  getQuizzes,
-} from "@/services/firebaseService";
+import { createDocEntry } from "@/services/firebaseService";
 import Spinner from "react-native-loading-spinner-overlay";
+import { dropTableAnswers } from "@/services/answersService";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { handleSyncLocalToFirebase } from "@/util/handleFirebaseSync";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -72,6 +71,17 @@ const QuizScreen = () => {
     modelOpen: false,
     content: quizState.title ? quizState.title : "",
   });
+
+  const { type, isConnected } = useNetInfo();
+  useEffect(() => {
+    const syncLocal = async () => await handleSyncLocalToFirebase();
+
+    if (isConnected) {
+      syncLocal();
+    } else {
+      console.log(" Can not sync Data at the moment");
+    }
+  }, []);
 
   useEffect(() => {
     findQuizById(db, id.toString(), foundQuizDataLocally);
@@ -116,7 +126,6 @@ const QuizScreen = () => {
         error: "Title Can not be empty",
       }));
     }
-    // dropTableQuestion(db);
     createQuestionTable(db);
     addQuestion(db, {
       id: generateRandomString(createQuestionState.question.substring(5)),
@@ -130,6 +139,7 @@ const QuizScreen = () => {
       quizSaved: true,
     }));
     handleOpenCloseModel(false);
+    setRefreshState(true);
   };
 
   const handleSubmitQuizEdit = () => {
@@ -187,30 +197,6 @@ const QuizScreen = () => {
       });
     }
   };
-  const onPublish = async () => {
-    const quizObj = {
-      id: quizState.id,
-      title: quizState.title,
-      status: quizState.status,
-    };
-    const quizCreated = await createQuiz(quizObj, setRefreshState);
-
-    // const quizQuestions = await findQuizQuestionsById(
-    //   db,
-    //   id.toString(),
-    //   () => {}
-    // );
-    if (quizCreated && quizQuestionsState[0]) {
-      const questionsAdded = await createQuizQuestion(
-        id.toString(),
-        quizQuestionsState
-      );
-      if (questionsAdded) {
-        console.log("========== ^-? ==============");
-      }
-    }
-  };
-  console.log("----", quizQuestionsState);
 
   return (
     <View style={styles.container}>
@@ -346,8 +332,6 @@ const QuizScreen = () => {
                   <Text style={styles.status}>{quizState.status}</Text>
                 </View>
                 <ActionItems
-                  hasPublish
-                  handlePublish={() => onPublish()}
                   handleEdit={() => {
                     setEditMode((prevState) => ({
                       ...prevState,

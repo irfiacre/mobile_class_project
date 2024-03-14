@@ -1,3 +1,4 @@
+import { generateRandomString } from "@/util/helpers";
 import database from "../db/firestore";
 import {
   collection,
@@ -9,51 +10,13 @@ import {
   updateDoc,
   arrayUnion,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
-export const createQuiz = async (
-  docObj: any,
-  setLoading: (value: boolean) => void
-) => {
-  setLoading(true);
-  try {
-    const docRef = doc(database, "quizzes", docObj.id);
-
-    await setDoc(docRef, docObj);
-
-    setLoading(false);
-    return true;
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    return false;
-  }
-};
-
-export const createQuizQuestion = async (
-  docObj: any,
-  setLoading: (value: boolean) => void
-) => {
-  setLoading(true);
-  try {
-    const quizDocRef = doc(database, "quizzes", docObj.quizId);
-    const questionsCollectionRef = collection(quizDocRef, "questions");
-
-    const addedEntry = await addDoc(questionsCollectionRef, docObj);
-    console.log(addedEntry);
-
-    setLoading(false);
-    return true;
-  } catch (e) {
-    console.error("Error adding document: ", e);
-    return false;
-  }
-};
-
-export const getQuizzes = async () => {
+export const getCollectionEntries = async (collectionName: string) => {
   let result: any[] = [];
   try {
-    const querySnapshot = await getDocs(collection(database, "quizzes"));
-
+    const querySnapshot = await getDocs(collection(database, collectionName));
     result = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -64,25 +27,38 @@ export const getQuizzes = async () => {
   return result;
 };
 
-export const addQuestionsToQuiz = async (
-  currentQuizId: string,
-  questionArr: any[]
-) => {
+export const createDocEntry = async (collectionName: string, docObj: any) => {
   try {
-    const quizDocRef = doc(database, "quizzes", currentQuizId);
-    await updateDoc(quizDocRef, {
-      questions: arrayUnion(...questionArr),
-    });
+    const docRef = doc(database, collectionName, docObj.id);
+    await setDoc(docRef, docObj);
     return true;
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    console.error(`Error adding document to ${collectionName}: `, e);
     return false;
   }
 };
 
-export const getQuizById = async (currentQuizId: string): Promise<any> => {
+export const updateDocEntry = async (
+  collectionName: string,
+  currentDocEntryId: string,
+  docObj: any
+): Promise<boolean> => {
   try {
-    const quizDocRef = doc(database, "quizzes", currentQuizId);
+    const quizDocRef = doc(database, collectionName, currentDocEntryId);
+    await updateDoc(quizDocRef, docObj);
+    return true;
+  } catch (error) {
+    console.error(`Error Updating document to ${collectionName}: `, error);
+    return false;
+  }
+};
+
+export const findDocEntryById = async (
+  collectionName: string,
+  currentDocEntryId: string
+): Promise<any> => {
+  try {
+    const quizDocRef = doc(database, collectionName, currentDocEntryId);
     const quizSnapshot = await getDoc(quizDocRef);
     if (quizSnapshot.exists()) {
       const quizData = {
@@ -91,10 +67,25 @@ export const getQuizById = async (currentQuizId: string): Promise<any> => {
       };
       return quizData;
     } else {
-      throw new Error("Quiz not found");
+      throw new Error(`DocEntry from ${collectionName}: not found`);
     }
   } catch (error: any) {
-    console.error("Error getting quiz by ID:", error.message);
+    console.error(`Error getting document to ${collectionName}: `, error);
+
     throw error;
+  }
+};
+
+export const deleteDocEntryById = async (
+  collectionName: string,
+  currentDocEntryId: string
+): Promise<any> => {
+  try {
+    const quizDocRef = doc(database, collectionName, currentDocEntryId);
+    await deleteDoc(quizDocRef);
+    return true;
+  } catch (error) {
+    console.error(`Error deleting document to ${collectionName}: `, error);
+    return false;
   }
 };
