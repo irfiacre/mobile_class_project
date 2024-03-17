@@ -1,6 +1,11 @@
 import { SQLiteDatabase } from "expo-sqlite";
 import { Platform } from "react-native";
 import * as SQLite from "expo-sqlite";
+import {
+  createDocEntry,
+  deleteDocEntryById,
+  updateDocEntry,
+} from "./firebaseService";
 
 interface AnswersObjInterface {
   id: string;
@@ -66,6 +71,12 @@ export const addAnswer = async (
         "insert into answers (id, question_id, content, is_correct) values (?, ?, ?,?)",
         [id, questionId, content, isCorrect]
       );
+    });
+    await createDocEntry("answers", {
+      id,
+      question_id: questionId,
+      content,
+      is_correct: isCorrect,
     });
     return true;
   } catch (error) {
@@ -139,6 +150,7 @@ export const deleteAnswerById = async (
     await db.transaction((tx) => {
       tx.executeSql("delete from answers where id=?", [answerId]);
     });
+    await deleteDocEntryById("questions", answerId);
     recordDeleted = true;
   } catch (error) {
     console.log(error);

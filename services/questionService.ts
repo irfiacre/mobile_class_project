@@ -1,6 +1,11 @@
 import { SQLiteDatabase } from "expo-sqlite";
 import { Platform } from "react-native";
 import * as SQLite from "expo-sqlite";
+import {
+  createDocEntry,
+  deleteDocEntryById,
+  updateDocEntry,
+} from "./firebaseService";
 
 interface QuestionObjInterface {
   id: string;
@@ -48,6 +53,7 @@ export const createQuestionTable = async (db: SQLiteDatabase) => {
         "create table if not exists questions (id text primary key not null, quiz_id text, question text, type text);"
       );
     });
+
     return true;
   } catch (error) {
     console.log(error);
@@ -57,9 +63,9 @@ export const createQuestionTable = async (db: SQLiteDatabase) => {
 
 export const addQuestion = async (
   db: SQLiteDatabase,
-  quizObj: QuestionObjInterface
+  questionObj: QuestionObjInterface
 ) => {
-  const { id, quizId, question, questionType } = quizObj;
+  const { id, quizId, question, questionType } = questionObj;
   try {
     db.transaction((tx) => {
       tx.executeSql(
@@ -67,6 +73,13 @@ export const addQuestion = async (
         [id, quizId, question, questionType]
       );
     });
+    await createDocEntry("questions", {
+      id,
+      quiz_id: quizId,
+      question,
+      type: questionType,
+    });
+
     return true;
   } catch (error) {
     console.log(error);
@@ -141,6 +154,7 @@ export const deleteQuestionById = async (
       tx.executeSql("delete from questions where id=?", [questionId]);
     });
     recordDeleted = true;
+    await deleteDocEntryById("questions", questionId);
   } catch (error) {
     console.log(error);
   }
@@ -149,15 +163,19 @@ export const deleteQuestionById = async (
 
 export const updateQuestion = async (
   db: SQLiteDatabase,
-  quizObj: { id: string; question: string }
+  questionObj: { id: string; question: string }
 ) => {
-  const { id, question } = quizObj;
+  const { id, question } = questionObj;
   try {
     db.transaction((tx) => {
       tx.executeSql("update questions set question=? where id=?", [
         question,
         id,
       ]);
+    });
+    await updateDocEntry("questions", id, {
+      id,
+      question: question,
     });
     return true;
   } catch (error) {

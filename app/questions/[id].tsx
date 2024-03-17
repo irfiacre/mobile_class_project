@@ -63,6 +63,7 @@ const QuizScreen = () => {
     setFetchData({ loading: false, updateData: false });
   };
   useEffect(() => {
+    findQuestionById(db, id.toString(), foundQuestionDataLocally);
     findQuestionAnswersById(db, id.toString(), foundAnswersDataLocally);
   }, [fetchData.updateData]);
 
@@ -126,6 +127,7 @@ const QuizScreen = () => {
     setFetchData({ loading: true, updateData: true });
     handleOpenCloseModel(false);
   };
+  console.log("-----", id, quizState);
 
   return (
     <View style={styles.container}>

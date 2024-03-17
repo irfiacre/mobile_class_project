@@ -54,7 +54,10 @@ const TakeQuiz = (props: { userInfo: any }) => {
               noFooter
             >
               <Text style={styles.attemptQuiz}>
-                Would You Like to Attempt the {}?
+                Would You Like to Attempt{" "}
+                <Text style={{ fontWeight: "700", paddingHorizontal: 5 }}>
+                  "{attemptedQuiz?.title}"
+                </Text>
               </Text>
               <CustomButton
                 style={styles.attemptQuizBtn}
