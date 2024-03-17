@@ -1,7 +1,14 @@
-import { Image, Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Modal,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import * as MediaLibrary from "expo-media-library";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ImageViewer from "react-native-image-viewing";
 import { MaterialIcons } from "@expo/vector-icons";
 

@@ -14,9 +14,12 @@ import { FlatList } from "react-native-gesture-handler";
 import { router, useNavigation } from "expo-router";
 import { View as ViewCustom } from "@/components/Themed";
 import { useRouteInfo } from "expo-router/build/hooks";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signOut } from "firebase/auth";
+import { auth } from "@/db/firestore";
 
 const Sidebar = ({ ...props }) => {
-  const { userInfo, handleLogout } = props;
+  const { userInfo } = props;
   const routerInfo = useRouteInfo();
   const listArrayItem = [
     {
@@ -96,17 +99,21 @@ const Sidebar = ({ ...props }) => {
       />
     );
   };
-
+  const handleLogout = async () => {
+    await signOut(auth);
+    await AsyncStorage.removeItem("@user");
+    router.navigate("/loginScreen");
+  };
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView />
       <View
         style={{ justifyContent: "center", alignItems: "center", flex: 0.3 }}
       >
-        {userInfo?.picture ? (
+        {userInfo?.photoURL ? (
           <View style={styles.thumbnail}>
             <Image
-              source={{ uri: userInfo?.picture }}
+              source={{ uri: userInfo?.photoURL }}
               style={{ width: 80, height: 80, borderRadius: 50 }}
             />
           </View>
@@ -118,7 +125,9 @@ const Sidebar = ({ ...props }) => {
           />
         )}
         <ViewCustom style={styles.separator} customColor="#eee" />
-        <Text style={styles.userFullName}>{userInfo?.name || "John Doe"}</Text>
+        <Text style={styles.userFullName}>
+          {userInfo?.name || userInfo?.displayName || "John Doe"}
+        </Text>
         <ViewCustom style={styles.separator} customColor="#eee" />
       </View>
 

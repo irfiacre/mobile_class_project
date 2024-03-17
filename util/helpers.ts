@@ -9,5 +9,18 @@ const generateRandomString = (text: String = "Key"): any => {
 };
 
 const primaryColor = "#1d78d6";
+const shuffleArray = (array: string[]): string[] => {
+  return array.sort(() => Math.random() - 0.5);
+};
 
-export { generateRandomString, primaryColor, generateRandomInt };
+const getRandomColor = () => {
+  return "#1d78d6";
+};
+
+export {
+  generateRandomString,
+  primaryColor,
+  generateRandomInt,
+  shuffleArray,
+  getRandomColor,
+};

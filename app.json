@@ -67,6 +67,12 @@
             "useFrameworks": "static"
           }
         }
+      ],
+      [
+        "expo-dev-launcher",
+        {
+          "launchModeExperimental": "most-recent"
+        }
       ]
     ],
     "experiments": {

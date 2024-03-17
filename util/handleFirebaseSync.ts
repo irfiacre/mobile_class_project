@@ -1,4 +1,4 @@
-import { findAnswersData } from "@/services/answersService";
+import { createAnswersTable, findAnswersData } from "@/services/answersService";
 import {
   createDocEntry,
   getCollectionEntries,
@@ -6,8 +6,10 @@ import {
 } from "@/services/firebaseService";
 import { findQuestionData } from "@/services/questionService";
 import { openDatabase, findQuizData } from "@/services/quizService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const localDatabase = openDatabase();
+
 let quizData: any[], questionData: any[], answerData: any[];
 
 const foundQuizData = async (data: any) => {
@@ -53,29 +55,34 @@ export const handleSyncLocalToFirebase = async (
 ) => {
   try {
     if (setLoading) setLoading(true);
-    await findQuizData(localDatabase, foundQuizData);
-    await findQuestionData(localDatabase, foundQuestionsData);
-    await findAnswersData(localDatabase, foundAnswersData);
-    let quizSynced = false;
-    if (quizData.length > 0) {
-      quizSynced = await handleSyncProcess("quizzes", quizData);
-    } else {
-      throw new Error("Could not sync quizzes");
-    }
-    let questionSynced = false;
-    if (questionData.length > 0 && quizSynced) {
-      questionSynced = await handleSyncProcess("questions", questionData);
-    } else {
-      throw new Error("Could not sync questions");
-    }
-    let answersSynced = false;
-    if (answerData.length > 0 && questionSynced) {
-      answersSynced = await handleSyncProcess("answers", answerData);
-    } else {
-      throw new Error("Could not sync answers");
-    }
-    if (answersSynced) {
-      console.log("== Syncing Finished ^^' ===");
+    const userJSON = await AsyncStorage.getItem("@user");
+    const userData = userJSON ? JSON.parse(userJSON) : null;
+    // check for moderator
+    if (userData?.email === "irfiacre@gmail.com") {
+      await findQuizData(localDatabase, foundQuizData);
+      await findQuestionData(localDatabase, foundQuestionsData);
+      await findAnswersData(localDatabase, foundAnswersData);
+      let quizSynced = false;
+      if (quizData.length > 0) {
+        quizSynced = await handleSyncProcess("quizzes", quizData);
+      } else {
+        console.log("Could not sync quizzes");
+      }
+      let questionSynced = false;
+      if (questionData.length > 0 && quizSynced) {
+        questionSynced = await handleSyncProcess("questions", questionData);
+      } else {
+        console.log("Could not sync questions");
+      }
+      let answersSynced = false;
+      if (answerData.length > 0 && questionSynced) {
+        answersSynced = await handleSyncProcess("answers", answerData);
+      } else {
+        console.log("Could not sync answers");
+      }
+      if (answersSynced) {
+        console.log("== Syncing Finished ^^' ===");
+      }
     }
     if (setLoading) setLoading(false);
   } catch (error) {

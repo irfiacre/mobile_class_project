@@ -15,51 +15,27 @@ import { useRouter } from "expo-router";
 export { ErrorBoundary } from "expo-router";
 import { createUsersTable, openDatabase } from "@/services/usersService";
 import { NativeBaseProvider } from "native-base";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import {
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithCredential,
+} from "firebase/auth";
+import { auth } from "@/db/firestore";
+import { createQuizTable } from "@/services/quizService";
+import { createQuestionTable } from "@/services/questionService";
+import { createAnswersTable } from "@/services/answersService";
+import Loading from "@/components/Loading";
 
-export const unstable_settings = { initialRouteName: "(tabs)" };
+WebBrowser.maybeCompleteAuthSession();
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
-  });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
-}
-
 const db = openDatabase();
 
-function RootLayoutNav() {
-  const [userInfo, setUserInfo] = useState(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    // (async () => {
-    //   const user = await AsyncStorage.getItem("@user");
-    //   setUserInfo(JSON.parse(user || "null"));
-    // })();
-    createUsersTable(db);
-  }, []);
-
-  const handleLogout = () => {
-    AsyncStorage.removeItem("@user");
-    router.replace("/loginScreen");
-  };
-
+const ProviderContainer = (props: any) => {
+  const { children } = props;
   return (
     <ThemeProvider value={DefaultTheme}>
       <NativeBaseProvider>
@@ -104,28 +80,103 @@ function RootLayoutNav() {
             ),
           }}
         >
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            {/* {!userInfo ? (
-            <LoginScreen />
-          ) : ( */}
-            <Drawer
-              drawerContent={(props) => (
-                <Sidebar
-                  userInfo={userInfo}
-                  handleLogout={handleLogout}
-                  {...props}
-                />
-              )}
-            >
-              <Drawer.Screen
-                name="(tabs)"
-                options={{ headerShown: true, title: "" }}
-              />
-            </Drawer>
-            {/* )} */}
-          </GestureHandlerRootView>
+          {children}
         </ToastProvider>
       </NativeBaseProvider>
     </ThemeProvider>
   );
+};
+
+export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    ...FontAwesome.font,
+  });
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    iosClientId:
+      "206559309545-vgep72ttudg3nca81gh54hlcoh7vtv95.apps.googleusercontent.com",
+    androidClientId:
+      "206559309545-nf8tlbg7mbmi8c92nudfvgmrf680hs4h.apps.googleusercontent.com",
+  });
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+  useEffect(() => {
+    createUsersTable(db);
+    createQuizTable(db);
+    createQuestionTable(db);
+    createAnswersTable(db);
+    createUsersTable(db);
+    if (response?.type === "success") {
+      const { id_token } = response.params;
+      const credentials = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credentials);
+    }
+  }, [response]);
+  const checkLocalUser = async () => {
+    try {
+      setLoading(true);
+      const userJSON = await AsyncStorage.getItem("@user");
+      const userData = userJSON ? JSON.parse(userJSON) : null;
+      setUserInfo(userData);
+    } catch (error) {
+      console.log(" Check Local User error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLocalUser();
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUserInfo(user);
+        await AsyncStorage.setItem("@user", JSON.stringify(user));
+      } else {
+        console.log("No user");
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  if (!loaded) {
+    return null;
+  }
+  if (loading) return <Loading />;
+  return userInfo ? (
+    <ProviderContainer>
+      <RootLayoutNav userInfo={userInfo} />
+    </ProviderContainer>
+  ) : (
+    <ThemeProvider
+      value={DefaultTheme}
+      children={
+        <NativeBaseProvider>
+          <LoginScreen promptAsync={promptAsync} />
+        </NativeBaseProvider>
+      }
+    />
+  );
 }
+
+const RootLayoutNav = (props: any) => {
+  const { userInfo } = props;
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Drawer
+        drawerContent={(props) => <Sidebar userInfo={userInfo} {...props} />}
+      >
+        <Drawer.Screen
+          name="(tabs)"
+          options={{ headerShown: true, title: "" }}
+        />
+      </Drawer>
+    </GestureHandlerRootView>
+  );
+};
