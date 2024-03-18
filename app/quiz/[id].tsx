@@ -208,7 +208,11 @@ const QuizScreen = () => {
           {modelValue ? (
             <View>
               <ModalComponent
-                title={editMode.modelOpen ? "Edit" : "New Quiz Answer"}
+                title={
+                  editMode.modelOpen
+                    ? `Edit Quiz: ${quizState.title}`
+                    : "Add Question"
+                }
                 isOpen
                 handleCloseModel={() => handleOpenCloseModel(false)}
                 handleOnSave={

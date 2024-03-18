@@ -26,6 +26,7 @@ export default function TabLayout() {
       });
       const syncLocal = async () => await handleSyncLocalToFirebase();
       if (isConnected) {
+        // Sync Data once connected to the Internet
         syncLocal();
       } else {
         console.log(" Can not sync Data at the moment");

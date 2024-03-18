@@ -190,7 +190,7 @@ const AttemptQuizScreen = () => {
       title: `Attempt for : ${title}`,
       messageTxt: `${
         scoreCount * 100 < 50 ? "You can do better!" : "Congratulations!"
-      } you got ${scoreTrack.percentile}/100`,
+      } you got ${scoreCount * 100}/100`,
     });
   };
 
