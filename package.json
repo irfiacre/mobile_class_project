@@ -61,7 +61,8 @@
     "react-native-svg": "14.1.0",
     "react-native-toast-notifications": "^3.4.0",
     "react-native-web": "^0.19.10",
-    "expo-updates": "~0.24.12"
+    "expo-updates": "~0.24.12",
+    "react-native-maps": "1.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -19,11 +19,16 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import { handleSyncLocalToFirebase } from "@/util/handleFirebaseSync";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TakeQuiz from "./takeQuiz";
+import { useNavigation } from "expo-router";
 
 const QuizScreen = () => {
   const { type, isConnected } = useNetInfo();
+  const navigation = useNavigation();
 
   useEffect(() => {
+    navigation.setOptions({
+      title: <Text style={styles.title}>Quizzes</Text>,
+    });
     const syncLocal = async () => await handleSyncLocalToFirebase();
     if (isConnected) {
       syncLocal();
@@ -104,7 +109,9 @@ const QuizScreen = () => {
       {quizData ? (
         <View>
           <View style={styles.head}>
-            <Text style={styles.title}>Quizzes</Text>
+            <Text style={{ ...styles.title, fontWeight: "500" }}>
+              My Quizzes
+            </Text>
             {isModerator && (
               <Pressable
                 style={styles.camera}
@@ -152,9 +159,6 @@ const QuizScreen = () => {
                 </ModalComponent>
               ) : (
                 <View>
-                  <Text style={{ ...styles.title, fontWeight: "500" }}>
-                    Local Quizzes
-                  </Text>
                   <FlatList
                     data={quizData}
                     keyExtractor={(item) => item.id}
@@ -179,7 +183,7 @@ const QuizScreen = () => {
               )}
               <View>
                 <Text style={{ ...styles.title, fontWeight: "500" }}>
-                  More Quizzes
+                  Synced Quizzes
                 </Text>
                 <FlatList
                   data={publishedQuizState}

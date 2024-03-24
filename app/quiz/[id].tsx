@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   deleteQuizById,
@@ -69,11 +69,10 @@ const QuizScreen = () => {
     modelOpen: false,
     content: quizState.title ? quizState.title : "",
   });
-
+  const navigation = useNavigation();
   const { type, isConnected } = useNetInfo();
   useEffect(() => {
     const syncLocal = async () => await handleSyncLocalToFirebase();
-
     if (isConnected) {
       syncLocal();
     } else {
@@ -157,6 +156,33 @@ const QuizScreen = () => {
   const responseListener = useRef();
 
   useEffect(() => {
+    navigation.setOptions({
+      title: (
+        <View>
+          <Text style={styles.title}>{quizState.title || id.toString()}</Text>
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{ marginRight: 15 }}>
+          <TouchableOpacity onPress={() => setRefreshState(true)}>
+            <MaterialIcons
+              name="refresh"
+              size={32}
+              style={{ color: "#1d78d6" }}
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+      headerLeft: () => (
+        <Pressable onPress={() => router.push("/quiz/")}>
+          <MaterialIcons
+            name="chevron-left"
+            size={48}
+            style={{ color: "#1d78d6" }}
+          />
+        </Pressable>
+      ),
+    });
     registerForPushNotificationsAsync().then((token) =>
       setExpoPushToken(token)
     );
@@ -294,25 +320,9 @@ const QuizScreen = () => {
             <View>
               <View style={styles.section1}>
                 <View style={styles.quizTitle}>
-                  <Pressable onPress={() => router.push("/quiz/")}>
-                    <MaterialIcons
-                      name="chevron-left"
-                      size={48}
-                      style={{ color: "#1d78d6" }}
-                    />
-                  </Pressable>
-                  <View>
+                  {/* <View>
                     <Text style={styles.title}>{quizState.title}</Text>
-                  </View>
-                </View>
-                <View>
-                  <TouchableOpacity onPress={() => setRefreshState(true)}>
-                    <MaterialIcons
-                      name="refresh"
-                      size={38}
-                      style={{ color: "#1d78d6" }}
-                    />
-                  </TouchableOpacity>
+                  </View> */}
                 </View>
               </View>
               <View
@@ -411,9 +421,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "700",
     color: "#1d78d6",
+    textAlign: "center",
+    marginTop: 10,
   },
   subTitle: {
     fontSize: 24,

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { openDatabase } from "@/services/quizService";
 import {
@@ -28,25 +28,42 @@ import {
 import ActionItems from "@/components/ActionItems";
 import { useToast } from "react-native-toast-notifications";
 import Checkbox from "expo-checkbox";
-import { useNetInfo } from "@react-native-community/netinfo";
-import { handleSyncLocalToFirebase } from "@/util/handleFirebaseSync";
 
 const QuizScreen = () => {
   const { id } = useLocalSearchParams();
-
+  const navigation = useNavigation();
   const db = openDatabase();
   const [fetchData, setFetchData] = useState({
     loading: true,
     updateData: true,
   });
 
-  const [quizState, setQuizState] = useState<any>({});
+  const [questionState, setQuestionState] = useState<any>({});
   const [modelValue, setModel] = useState(false);
 
   const handleOpenCloseModel = (condition: boolean) => setModel(condition);
   const router = useRouter();
   const foundQuestionDataLocally = (data: any) => {
-    setQuizState(data[0]);
+    setQuestionState(data[0]);
+    navigation.setOptions({
+      title: "",
+      headerLeft: () => (
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: "/quiz/[id]",
+              params: { id: questionState.quiz_id },
+            })
+          }
+        >
+          <MaterialIcons
+            name="chevron-left"
+            size={48}
+            style={{ color: primaryColor }}
+          />
+        </Pressable>
+      ),
+    });
     setFetchData({ loading: false, updateData: false });
   };
 
@@ -102,7 +119,7 @@ const QuizScreen = () => {
       deleteQuestionById(db, id.toString());
       router.navigate({
         pathname: "/quiz/[id]",
-        params: { id: quizState.quiz_id },
+        params: { id: questionState.quiz_id },
       });
     } else {
       toast.show("Unable to delete Question, Please first delete all answers", {
@@ -113,7 +130,7 @@ const QuizScreen = () => {
   };
   const [editMode, setEditMode] = useState({
     modelOpen: false,
-    content: quizState.question,
+    content: questionState.question,
   });
   const handleSubmitQuestionEdit = () => {
     updateQuestion(db, {
@@ -127,11 +144,10 @@ const QuizScreen = () => {
     setFetchData({ loading: true, updateData: true });
     handleOpenCloseModel(false);
   };
-  console.log("-----", id, quizState);
 
   return (
     <View style={styles.container}>
-      {quizState.question ? (
+      {questionState.question ? (
         <View>
           {modelValue ? (
             <ModalComponent
@@ -211,11 +227,11 @@ const QuizScreen = () => {
             </ModalComponent>
           ) : (
             <View>
-              <Pressable
+              {/* <Pressable
                 onPress={() =>
                   router.push({
                     pathname: "/quiz/[id]",
-                    params: { id: quizState.quiz_id },
+                    params: { id: questionState.quiz_id },
                   })
                 }
               >
@@ -224,15 +240,15 @@ const QuizScreen = () => {
                   size={48}
                   style={{ color: "#1d78d6", marginLeft: -15 }}
                 />
-              </Pressable>
+              </Pressable> */}
               <View style={styles.section1}>
-                <Text style={styles.title}>{quizState.question}</Text>
+                <Text style={styles.title}>{questionState.question}</Text>
                 <ActionItems
                   handleEdit={() => {
                     setEditMode((prevState) => ({
                       ...prevState,
                       modelOpen: true,
-                      content: quizState.question,
+                      content: questionState.question,
                     }));
                     handleOpenCloseModel(true);
                   }}
@@ -243,15 +259,15 @@ const QuizScreen = () => {
               <View
                 style={{
                   backgroundColor:
-                    quizState.type === "open" ? "grey" : "#439D44",
+                    questionState.type === "open" ? "grey" : "#439D44",
                   width: 200,
                   borderRadius: 50,
                   marginVertical: "10%",
                 }}
               >
-                <Text style={styles.status}>{quizState.type}</Text>
+                <Text style={styles.status}>{questionState.type}</Text>
               </View>
-              {quizState.type !== "open" && (
+              {questionState.type !== "open" && (
                 <View>
                   <View style={styles.section2}>
                     <View>

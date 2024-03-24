@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 // import { getQuestionsByQuizId, getQuizById } from "@/util/database";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 // import FormButton from "@/app-component/FormButton";
 // import ResultModal from "@/app-component/ResultModal";
 import Spinner from "react-native-loading-spinner-overlay";
 import QuizItem from "@/components/QuizItem";
-import { getRandomColor, shuffleArray } from "@/util/helpers";
+import { getRandomColor, primaryColor, shuffleArray } from "@/util/helpers";
 import {
   findDocEntryByField,
   findDocEntryById,
@@ -50,8 +50,11 @@ const AttemptQuizScreen = () => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-
+  const navigation = useNavigation();
   useEffect(() => {
+    navigation.setOptions({
+      title: "",
+    });
     registerForPushNotificationsAsync().then((token: any) =>
       setExpoPushToken(token)
     );
@@ -98,6 +101,25 @@ const AttemptQuizScreen = () => {
           id.toString()
         );
         setTitle(currentQuiz.title);
+        navigation.setOptions({
+          title: currentQuiz.title,
+          headerRight: () => (
+            <Text
+              style={{
+                marginRight: 20,
+                fontSize: 18,
+                fontWeight: "bold",
+                color: primaryColor,
+              }}
+              onPress={() => {
+                reset();
+                listRef?.current?.scrollToIndex({ animated: true, index: 0 });
+              }}
+            >
+              Reset
+            </Text>
+          ),
+        });
 
         const questionsData = await findDocEntryByField(
           "questions",
@@ -218,21 +240,7 @@ const AttemptQuizScreen = () => {
             color: "#000",
           }}
         >
-          {title} :{" " + currentIndex + "/" + questions.length}
-        </Text>
-        <Text
-          style={{
-            marginRight: 20,
-            fontSize: 18,
-            fontWeight: "bold",
-            color: "black",
-          }}
-          onPress={() => {
-            reset();
-            listRef?.current?.scrollToIndex({ animated: true, index: 0 });
-          }}
-        >
-          Reset
+          Progress :{" " + currentIndex + "/" + questions.length}
         </Text>
       </View>
 
