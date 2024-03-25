@@ -27,6 +27,7 @@ import { createQuizTable } from "@/services/quizService";
 import { createQuestionTable } from "@/services/questionService";
 import { createAnswersTable } from "@/services/answersService";
 import Loading from "@/components/Loading";
+import { ANDROID_CLIENT_ID, IOS_CLIENT_ID } from "@/services/constants";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -95,10 +96,8 @@ export default function RootLayout() {
   const [userInfo, setUserInfo] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId:
-      "206559309545-vgep72ttudg3nca81gh54hlcoh7vtv95.apps.googleusercontent.com",
-    androidClientId:
-      "206559309545-nf8tlbg7mbmi8c92nudfvgmrf680hs4h.apps.googleusercontent.com",
+    iosClientId: IOS_CLIENT_ID,
+    androidClientId: ANDROID_CLIENT_ID,
   });
   const router = useRouter();
 

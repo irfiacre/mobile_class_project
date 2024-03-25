@@ -23,6 +23,9 @@
         "NSContactsUsageDescription": "Allow $(24866) to access your contacts.",
         "NSPhotoLibraryUsageDescription": "Allow $(24866) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(24866) to save photos."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyDsd_AHt1twk6QObcc0bqcZ5USTwYof8Xc"
       }
     },
     "android": {

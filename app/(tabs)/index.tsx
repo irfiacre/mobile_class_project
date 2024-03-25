@@ -1,5 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
+import MapView, {
+  Marker,
+  PROVIDER_DEFAULT,
+  PROVIDER_GOOGLE,
+} from "react-native-maps";
 import { StyleSheet, View, Text } from "react-native";
 import { INITIAL_REGION } from "@/services/constants";
 import { useNavigation } from "expo-router";
