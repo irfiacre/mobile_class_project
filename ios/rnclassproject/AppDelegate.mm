@@ -15,7 +15,7 @@
 {
 // @generated begin react-native-maps-init - expo prebuild (DO NOT MODIFY) sync-6bb7924b17519e2ba55a3746c6c8c9e82d33f492
 #if __has_include(<GoogleMaps/GoogleMaps.h>)
-  [GMSServices provideAPIKey:@"AIzaSyDsd_AHt1twk6QObcc0bqcZ5USTwYof8Xc"];
+  [GMSServices provideAPIKey:@"AIzaSyDk6H-6sJuDi0s-c5Jh8eBaZQ-xH-4olCA"];
 #endif
 // @generated end react-native-maps-init
 // @generated begin @react-native-firebase/app-didFinishLaunchingWithOptions - expo prebuild (DO NOT MODIFY) sync-ecd111c37e49fdd1ed6354203cd6b1e2a38cccda

@@ -170,6 +170,30 @@ PODS:
   - FirebaseSharedSwift (10.22.0)
   - fmt (6.2.1)
   - glog (0.3.5)
+  - Google-Maps-iOS-Utils (4.2.2):
+    - Google-Maps-iOS-Utils/Clustering (= 4.2.2)
+    - Google-Maps-iOS-Utils/Geometry (= 4.2.2)
+    - Google-Maps-iOS-Utils/GeometryUtils (= 4.2.2)
+    - Google-Maps-iOS-Utils/Heatmap (= 4.2.2)
+    - Google-Maps-iOS-Utils/QuadTree (= 4.2.2)
+    - GoogleMaps (~> 7.3)
+  - Google-Maps-iOS-Utils/Clustering (4.2.2):
+    - Google-Maps-iOS-Utils/QuadTree
+    - GoogleMaps (~> 7.3)
+  - Google-Maps-iOS-Utils/Geometry (4.2.2):
+    - GoogleMaps (~> 7.3)
+  - Google-Maps-iOS-Utils/GeometryUtils (4.2.2):
+    - GoogleMaps (~> 7.3)
+  - Google-Maps-iOS-Utils/Heatmap (4.2.2):
+    - Google-Maps-iOS-Utils/QuadTree
+    - GoogleMaps (~> 7.3)
+  - Google-Maps-iOS-Utils/QuadTree (4.2.2):
+    - GoogleMaps (~> 7.3)
+  - GoogleMaps (7.4.0):
+    - GoogleMaps/Maps (= 7.4.0)
+  - GoogleMaps/Base (7.4.0)
+  - GoogleMaps/Maps (7.4.0):
+    - GoogleMaps/Base
   - GoogleUtilities/AppDelegateSwizzler (7.13.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -1079,6 +1103,10 @@ PODS:
     - React-debug
   - react-native-contacts (7.0.8):
     - React-Core
+  - react-native-google-maps (1.10.0):
+    - Google-Maps-iOS-Utils (= 4.2.2)
+    - GoogleMaps (= 7.4.0)
+    - React-Core
   - react-native-maps (1.10.0):
     - React-Core
   - react-native-netinfo (11.1.0):
@@ -1348,6 +1376,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
+  - react-native-google-maps (from `/Users/irfiacre/rn_class_project/node_modules/react-native-maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1391,6 +1420,8 @@ SPEC REPOS:
     - FirebaseDatabase
     - FirebaseSharedSwift
     - fmt
+    - Google-Maps-iOS-Utils
+    - GoogleMaps
     - GoogleUtilities
     - GTMSessionFetcher
     - leveldb-library
@@ -1517,6 +1548,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-contacts:
     :path: "../node_modules/react-native-contacts"
+  react-native-google-maps:
+    :path: "/Users/irfiacre/rn_class_project/node_modules/react-native-maps"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-netinfo:
@@ -1623,6 +1656,8 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: 48076404e6e52372290d15a07d2ed1d2f1754023
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
+  Google-Maps-iOS-Utils: f77eab4c4326d7e6a277f8e23a0232402731913a
+  GoogleMaps: 032f676450ba0779bd8ce16840690915f84e57ac
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
   hermes-engine: 1d1835b2cc54c381909d94d1b3c8e0a2f1a94a0e
@@ -1654,6 +1689,7 @@ SPEC CHECKSUMS:
   React-logger: 0331362115f0f5b392bd7ed14636d1a3ea612479
   React-Mapbuffer: 30d796a057e4e077d44b4c2ba17869fb8c1064eb
   react-native-contacts: cb4f3b823550adbce0802901b9e63bf1526ec0af
+  react-native-google-maps: 8007277310c0d0f7266f7987e511fb3f5505f3f2
   react-native-maps: b4c3b092b1c71240d8d4792bae3738828942f14a
   react-native-netinfo: 3aa5637c18834966e0c932de8ae1ae56fea20a97
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
@@ -1690,6 +1726,6 @@ SPEC CHECKSUMS:
   sqlite3: f163dbbb7aa3339ad8fc622782c2d9d7b72f7e9c
   Yoga: a716eea57d0d3430219c0a5a233e1e93ee931eb7
 
-PODFILE CHECKSUM: 244a69335806cb19733cf1039346389d60c92020
+PODFILE CHECKSUM: e148cd034d43cca7be718268174d7dd4bd09655a
 
 COCOAPODS: 1.15.2

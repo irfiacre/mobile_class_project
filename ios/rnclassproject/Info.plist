@@ -94,5 +94,7 @@
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Allow $(24866) to access your location</string>
   </dict>
 </plist>
