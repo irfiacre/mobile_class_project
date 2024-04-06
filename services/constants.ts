@@ -22,3 +22,4 @@ export const ANDROID_CLIENT_ID =
   "10924546893-a41e6gufqij4tpft0odgb63i5jtj007o.apps.googleusercontent.com";
 
 export const GOOGLE_MAPS_API_KEY = "AIzaSyDsd_AHt1twk6QObcc0bqcZ5USTwYof8Xc";
+// AIzaSyDsd_AHt1twk6QObcc0bqcZ5USTwYof8Xc

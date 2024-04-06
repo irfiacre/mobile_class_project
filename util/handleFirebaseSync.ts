@@ -58,7 +58,10 @@ export const handleSyncLocalToFirebase = async (
     const userJSON = await AsyncStorage.getItem("@user");
     const userData = userJSON ? JSON.parse(userJSON) : null;
     // check for moderator
-    if (userData?.email === "irfiacre@gmail.com") {
+    if (
+      // userData?.email === "irfiacre@gmail.com"
+      false
+    ) {
       await findQuizData(localDatabase, foundQuizData);
       await findQuestionData(localDatabase, foundQuestionsData);
       await findAnswersData(localDatabase, foundAnswersData);
