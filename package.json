@@ -62,7 +62,8 @@
     "react-native-toast-notifications": "^3.4.0",
     "react-native-web": "^0.19.10",
     "expo-updates": "~0.24.12",
-    "react-native-maps": "1.10.0"
+    "react-native-maps": "1.10.0",
+    "expo-sensors": "~12.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Tabs } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useToast } from "react-native-toast-notifications";
 import { generateRandomString } from "@/util/helpers";
@@ -51,15 +51,11 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="calculator"
+        name="steps/index"
         options={{
-          title: "Calculator",
+          title: "Steps",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="calculator-variant"
-              size={size}
-              color={color}
-            />
+            <Ionicons name="footsteps-sharp" size={size} color={color} />
           ),
         }}
       />

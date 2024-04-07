@@ -1,7 +1,7 @@
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
-import Button from "../../components/Button";
-import Row from "../../components/Row";
+import Button from "../Button";
+import Row from "../Row";
 import calculator, { initialState } from "../../util/calculator";
 
 const CalculatorScreen = () => {

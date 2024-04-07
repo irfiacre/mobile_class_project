@@ -96,5 +96,7 @@
     <false/>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Allow $(24866) to access your location</string>
+    <key>NSMotionUsageDescription</key>
+    <string>Allow 24866 to access your motion</string>
   </dict>
 </plist>
