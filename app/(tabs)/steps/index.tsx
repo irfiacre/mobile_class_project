@@ -36,7 +36,7 @@ const StepsCounter = () => {
       title: "Steps Count",
       headerRight: () => null,
     });
-    const subscription = subscribe();
+    const subscription: any = subscribe();
     return () => subscription && subscription.remove();
   }, []);
 
