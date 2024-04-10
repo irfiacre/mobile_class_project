@@ -78,6 +78,12 @@
         {
           "launchModeExperimental": "most-recent"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(24866) to use your location."
+        }
       ]
     ],
     "experiments": {

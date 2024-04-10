@@ -17,10 +17,16 @@ const getRandomColor = () => {
   return "#1d78d6";
 };
 
+const validateEmail = (email: string) => {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+};
+
 export {
   generateRandomString,
   primaryColor,
   generateRandomInt,
   shuffleArray,
   getRandomColor,
+  validateEmail,
 };

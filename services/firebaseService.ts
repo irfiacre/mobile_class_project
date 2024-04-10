@@ -13,6 +13,12 @@ import {
   deleteDoc,
   where,
 } from "firebase/firestore";
+import {
+  updateProfile,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "@/db/firestore";
 
 export const getCollectionEntries = async (collectionName: string) => {
   let result: any[] = [];
@@ -117,4 +123,50 @@ export const findDocEntryByField = async (
     throw error;
   }
   return result;
+};
+
+export const signInUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  await signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      console.log("==========", user);
+
+      return user;
+    })
+    .catch((error) => {
+      const errorMessage = error.message;
+      return errorMessage;
+    });
+};
+
+export const createUser = async ({
+  name,
+  email,
+  password,
+}: {
+  name: string;
+  email: string;
+  password: string;
+}) => {
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(async (userCredential) => {
+      // Signed up
+      const user = userCredential.user;
+
+      await updateProfile(auth.currentUser, { displayName: name });
+
+      return user;
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
 };

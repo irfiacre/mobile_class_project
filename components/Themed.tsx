@@ -57,7 +57,7 @@ export function TextInput(props: TextInputProps) {
             paddingHorizontal: 10,
             paddingVertical: 15,
             minHeight: isMessageBox ? 100 : 0,
-            borderRadius: 6,
+            borderRadius: 8,
             borderColor: "gray",
             borderWidth: 1,
             fontSize: 18,
@@ -73,6 +73,7 @@ export function TextInput(props: TextInputProps) {
         defaultValue={textValue}
         placeholder={`Enter ${identifier}.....`}
         secureTextEntry={identifier.toLocaleLowerCase().includes("password")}
+        autoCapitalize={"none"}
       />
     </KeyboardAvoidingView>
   );
