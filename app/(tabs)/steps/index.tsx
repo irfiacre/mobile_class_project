@@ -11,19 +11,37 @@ const StepsCounter = () => {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
   const [pastStepCount, setPastStepCount] = useState(0);
   const [currentStepCount, setCurrentStepCount] = useState(0);
+  const [yesterdayStepCount, setYesterdayStepCount] = useState(0);
+
   const subscribe = async () => {
     const isAvailable = await Pedometer.isAvailableAsync();
     setIsPedometerAvailable(String(isAvailable));
 
     if (isAvailable) {
+      const startOfDay = new Date();
+      startOfDay.setUTCHours(0, 0, 0, 0);
+
+      const endOfDay = new Date();
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      const pastStepCountResult = await Pedometer.getStepCountAsync(
+        startOfDay,
+        endOfDay
+      );
+      if (pastStepCountResult) {
+        setPastStepCount(pastStepCountResult.steps);
+      }
       const end = new Date();
       const start = new Date();
       start.setDate(end.getDate() - 1);
+      start.setUTCHours(0, 0, 0, 0);
 
-      const pastStepCountResult = await Pedometer.getStepCountAsync(start, end);
-
-      if (pastStepCountResult) {
-        setPastStepCount(pastStepCountResult.steps);
+      const yesterdayStepCountResult = await Pedometer.getStepCountAsync(
+        start,
+        startOfDay
+      );
+      if (yesterdayStepCountResult) {
+        setYesterdayStepCount(yesterdayStepCountResult.steps);
       }
 
       return Pedometer.watchStepCount((result) => {
@@ -37,23 +55,22 @@ const StepsCounter = () => {
       headerRight: () => null,
     });
     const subscription: any = subscribe();
+
     return () => subscription && subscription.remove();
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Today</Text>
-      <RingProgress progress={0.8} />
+      <Text style={styles.title}>Today: {`${currentStepCount} Steps`}</Text>
+      <RingProgress progress={pastStepCount / 10000} />
       <View style={styles.valuesContainer}>
         <View style={styles.values}>
-          <Value label="Yesterday" value={`${pastStepCount}`} />
-          <Value label="Today" value={`${currentStepCount}`} />
+          <Value label="Today" value={`${pastStepCount}`} />
           <Value
-            label="Steps Counter"
-            value={`${
-              isPedometerAvailable == "false" ? "On" : "Not Supported"
-            }`}
+            label="Distance covered"
+            value={`${(pastStepCount * 0.0008).toFixed(2)} Km`}
           />
+          <Value label="Yesterday steps" value={`${yesterdayStepCount}`} />
         </View>
       </View>
     </View>
@@ -71,7 +88,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     fontWeight: "700",
-    fontFamily: "poppins",
     paddingVertical: "10%",
   },
   valuesContainer: {
@@ -80,7 +96,7 @@ const styles = StyleSheet.create({
   },
   values: {
     flexDirection: "row",
-    gap: 25,
+    gap: 10,
     flexWrap: "wrap",
   },
 });

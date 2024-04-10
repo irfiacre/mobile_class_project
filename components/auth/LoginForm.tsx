@@ -103,12 +103,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 24,
     marginVertical: 15,
-    fontFamily: "poppins",
   },
   errorText: {
     fontSize: 16,
     paddingHorizontal: 10,
-    fontFamily: "poppins",
     width: "100%",
     textAlign: "left",
     color: "#F95368",
@@ -125,7 +123,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "500",
-    fontFamily: "poppins",
   },
   inputStyle: {
     marginVertical: 2.5,

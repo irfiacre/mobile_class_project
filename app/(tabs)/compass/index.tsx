@@ -30,6 +30,14 @@ const CompassScreen = () => {
 
     setState((prevState: any) => ({ ...prevState, location: location }));
   };
+  useEffect(() => {
+    navigation.getParent()?.setOptions({
+      title: "Compass",
+      headerRight: () => null,
+    });
+    getLocationAsync();
+  }, []);
+
   const spin = () => {
     let start = JSON.stringify(spinValue);
     let heading = Math.round(state.heading);
@@ -45,18 +53,14 @@ const CompassScreen = () => {
     Animated.timing(spinValue, {
       toValue: rot,
       duration: 300,
-      easing: Easing.ease,
+      easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
     }).start();
   };
+
   useEffect(() => {
-    navigation.getParent()?.setOptions({
-      title: "Compass",
-      headerRight: () => null,
-    });
-    getLocationAsync();
     spin();
-  }, []);
+  }, [spinValue]);
 
   let LoadingText = "Loading...";
   let display: any = LoadingText;

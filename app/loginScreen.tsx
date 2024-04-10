@@ -153,7 +153,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 10,
     color: "#858597",
-    fontFamily: "poppins",
   },
   loginWithGoogle: {
     flexDirection: "row",
