@@ -20,9 +20,9 @@
       "bundleIdentifier": "irfiacre.class",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "NSContactsUsageDescription": "Allow $(24866) to access your contacts.",
-        "NSPhotoLibraryUsageDescription": "Allow $(24866) to access your photos.",
-        "NSPhotoLibraryAddUsageDescription": "Allow $(24866) to save photos."
+        "NSContactsUsageDescription": "Allow $(PRODUCT_NAME) to access your contacts.",
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
       },
       "config": {
         "googleMapsApiKey": "AIzaSyDk6H-6sJuDi0s-c5Jh8eBaZQ-xH-4olCA"
@@ -53,14 +53,14 @@
       [
         "expo-contacts",
         {
-          "contactsPermission": "Allow $(24866) to access your contacts."
+          "contactsPermission": "Allow $(PRODUCT_NAME) to access your contacts."
         }
       ],
       [
         "expo-media-library",
         {
-          "photosPermission": "Allow $(24866) to access your photos.",
-          "savePhotosPermission": "Allow $(24866) to save photos.",
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
           "isAccessMediaLocationEnabled": true
         }
       ],
@@ -82,7 +82,7 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(24866) to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
     ],

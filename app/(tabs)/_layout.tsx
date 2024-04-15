@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Tabs } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useToast } from "react-native-toast-notifications";
 import { generateRandomString } from "@/util/helpers";
@@ -20,10 +20,10 @@ export default function TabLayout() {
         ? `${type} is connected successfully`
         : "Internet got disconnected";
 
-      toast.show(message, {
-        type: isConnected ? "success" : "danger",
-        id: generateRandomString("toast"),
-      });
+      // toast.show(message, {
+      //   type: isConnected ? "success" : "danger",
+      //   id: generateRandomString("toast"),
+      // });
       const syncLocal = async () => await handleSyncLocalToFirebase();
       if (isConnected) {
         // Sync Data once connected to the Internet
@@ -69,15 +69,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="aboutUs"
+        name="lightSensor"
         options={{
-          tabBarLabel: "About Us",
+          tabBarLabel: "Light",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="information"
-              size={size}
-              color={color}
-            />
+            <Entypo name="light-down" size={size} color={color} />
           ),
         }}
       />
