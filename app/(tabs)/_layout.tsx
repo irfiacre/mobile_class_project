@@ -56,7 +56,7 @@ export default function TabLayout() {
           title: "Steps",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="footsteps-sharp" size={size} color={color} />
-          ),
+          )
         }}
       />
       <Tabs.Screen
